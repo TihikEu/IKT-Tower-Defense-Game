@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Allura&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Oswald:wght@200..700&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Saira:ital,wght@0,100..900;1,100..900&family=Sen:wght@400..800&display=swap');
+body{
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 1.5;
+}
+
+.tile{
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+section{
+    margin-top: 200px;
+}
+
+/* ai ( ideiglenes ( teszt ))*/
+.game_screen {
+    position: relative;
+}
+
+.game_screen .row {
+    margin: 0;
+}
+
+.enemy {
+    position: absolute;
+    width: 4%;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.enemy_hitbox {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid #000000;
+}
+
+.enemy_hp {
+    position: absolute;
+    left: 0;
+    bottom: -40%;
+    border: 2px solid #000000;
+    margin-bottom: 4px;
+    width: 100%;
+    height: 10px;
+    background-color: #32cd32;
+}
+
+.tile:hover{
+    mask-image: #0000002a;
+}
