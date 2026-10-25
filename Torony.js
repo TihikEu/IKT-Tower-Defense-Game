@@ -1,110 +1,112 @@
-class Torony {
-    #oszlop
-    #sor
-    #varakozas
-    #szog
-    #sebzes
-    #hatotav
-    #ar
-    #szint
-    #maxSzint
+class Tower {
+    #x;
+    #y;
 
-    constructor(oszlop, sor, sebzes, hatotav, ar) {
-        this.setOszlop(oszlop)
-        this.setSor(sor)
-        this.setSebzes(sebzes)
-        this.setHatotav(hatotav) 
-        this.setAr(ar)
-        this.setVarakozas(0)
-        this.setSzog(0)
-        this.setSzint(1)
-        this.#maxSzint = 5
+    #tile;
+    #id;
+
+    #level = 1;
+    #damage = 15;
+    #element;
+
+    #range = 2;
+    #fireRate = 1; // lövés / másodperc
+    #cooldown = 0;
+    #rangeElement;
+
+    #levelCosts = [
+        [50, 75]
+    ];
+
+    constructor(x, y, tile, id) {
+        this.setX(x);
+        this.setY(y);
+        this.setTile(tile);
+        this.setId(id);
+
+        this.createElement();
     }
 
-    getOszlop() { 
-        return this.#oszlop 
+    setX(x) {
+        this.#x = x;
     }
 
-    getSor() { 
-        return this.#sor 
+    setY(y) {
+        this.#y = y;
     }
 
-    getVarakozas() { 
-        return this.#varakozas 
+    setTile(tile) {
+        this.#tile = tile;
     }
 
-    getSzog() { 
-        return this.#szog 
+    setId(id) {
+        this.#id = id;
     }
 
-    getSebzes() { 
-        return this.#sebzes 
+    getX() {
+        return this.#x;
     }
 
-    getHatotav() { 
-        return this.#hatotav 
+    getY() {
+        return this.#y;
     }
 
-    getAr() { 
-        return this.#ar
-     }
-
-    getSzint() { 
-        return this.#szint 
+    getLevel() {
+        return this.#level;
     }
 
-    getMaxSzint() { 
-    return this.#maxSzint 
+    getDamage() {
+        return this.#damage;
     }
 
-    setOszlop(oszlop) { 
-        this.#oszlop = oszlop 
+    getRange() {
+        return this.#range;
     }
 
-    setSor(sor) { 
-        this.#sor = sor 
-    }
-
-    setSebzes(sebzes) { 
-        this.#sebzes = sebzes 
-    }
-
-    setHatotav(hatotav) { 
-        this.#hatotav = hatotav 
-    }
-
-    setAr(ar) { 
-        this.#ar = ar 
-    }
-
-    setSzint(szint) { 
-        this.#szint = szint 
-    }
-
-    setVarakozas(varakozas) { 
-        this.#varakozas = varakozas 
-    }
-
-    setSzog(szog) { 
-        this.#szog = szog 
-    }
-
-    fejleszthetoE() {
-        return this.#szint < this.#maxSzint
-    }
-
-    fejleszt() {
-        if (!this.fejleszthetoE()) {
-            return false
+    upgrade() {
+        if (this.#level >= 3) {
+            alert("Már max level ez a torony!");
+            return;
         }
-        this.#szint++
-        if (this.#szint === this.#maxSzint) {
-                this.#sebzes = Math.pow(this.#sebzes, 1.1)
-                this.#hatotav = Math.pow(this.#hatotav, 1.1)
-        } else {
-                this.#sebzes *= 1.25
-                this.#hatotav *= 1.25
-        }   
-        return true
+
+        const cost = this.#levelCosts[0][this.#level - 1];
+
+        if (penz < cost) {
+            alert("Nincs elég pénzed a fejlesztéshez!");
+            return;
+        }
+
+        penz -= cost;
+        this.#level++;
+
+        this.#damage += 5;
+        this.#range += 0.5;
+
+        this.#element.classList.remove(
+            "level-1",
+            "level-2",
+            "level-3"
+        );
+
+        this.#element.classList.add(
+            "level-" + this.#level
+        );
+
+        kijelzo_frissites();
+    }
+
+    createElement() {
+        this.#element = document.createElement("div");
+
+        this.#element.classList.add(
+            "tower",
+            "level-" + this.#level
+        );
+
+        this.#element.addEventListener("click", () => {
+            towerUpgrade(this.#id);
+        });
+
+        this.#tile.appendChild(this.#element);
     }
 }
