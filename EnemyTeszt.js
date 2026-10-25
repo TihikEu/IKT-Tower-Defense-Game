@@ -73,3 +73,5 @@ console.assert(jatekter.children.length === 1, "Hiba a torol() metódusban, nem 
 
 enemy.torol()
 console.assert(jatekter.children.length === 0, "Hiba a torol() metódusban, nem törli az elemet a játéktérből")
+
+//hianyos maga a classod, nem csinalsz semmit a hp-val
