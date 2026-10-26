@@ -6,13 +6,13 @@ class Tower {
     #id;
 
     #level = 1;
-    #damage = 15;
+    #damage = 10;
+    #fireRate = 1;
+    #cooldown = 0;
+
     #element;
 
     #range = 2;
-    #fireRate = 1; // lövés / másodperc
-    #cooldown = 0;
-    #rangeElement;
 
     #levelCosts = [
         [50, 75]
@@ -61,6 +61,22 @@ class Tower {
 
     getRange() {
         return this.#range;
+    }
+
+    getFireRate(){
+        return this.#fireRate;
+    }
+
+    setCooldown(cd){
+        if(cd < 0){
+            this.#cooldown = 0;
+        } else {
+            this.#cooldown = cd;
+        }
+    }
+
+    getCooldown(){
+        return this.#cooldown;
     }
 
     upgrade() {
