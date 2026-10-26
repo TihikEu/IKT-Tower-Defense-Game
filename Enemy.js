@@ -7,12 +7,13 @@ class Enemy {
 
     #game_screen;
 
-    #enemy;     // a külső elem (ez mozog a pályán)
-    #element;   // a hitbox
-    #hp_bar;    // az életcsík
+    #enemy;
+    #element;
 
     #hp;
     #max_hp;
+    #hp_bar;
+    #hp_progress;
 
     constructor(x, y, game_screen, hitbox_color) {
         this.setX(x);
@@ -21,7 +22,7 @@ class Enemy {
         this.setHitbox_color(hitbox_color);
 
         this.#cel = 1;
-        this.#max_hp = 100;
+        this.#max_hp = 50;
         this.#hp = this.#max_hp;
 
         this.createElement();
@@ -46,12 +47,31 @@ class Enemy {
         this.#game_screen = game_screen;
     }
 
-    setHitbox_color(hitbox_color){
+    setHitbox_color(hitbox_color) {
         this.#hitbox_color = hitbox_color;
     }
 
-    getHitbox_color(){
+    getHitbox_color() {
         return this.#hitbox_color;
+    }
+
+    takeDamage(dmg) {
+        this.#hp -= dmg;
+
+        this.updateHp();
+
+        if (this.isDead()) {
+            this.#hp = 0;
+        }
+    }
+
+    isDead() {
+        return this.#hp <= 0;
+    }
+
+    updateHp(){
+        this.#hp_progress.style.width = (this.#hp / this.#max_hp * 100) + "%";
+        this.#hp_progress.innerHTML = (this.#hp / this.#max_hp * 100) + "%";
     }
 
     createElement() {
@@ -60,12 +80,27 @@ class Enemy {
 
         this.#element = document.createElement("div");
         this.#element.classList.add("enemy_hitbox");
-        this.#element.style.background = this.getHitbox_color();
-
-        this.#hp_bar = document.createElement("div");
-        this.#hp_bar.classList.add("enemy_hp");
+        this.#element.style.background = this.getHitbox_color()[0];
+        this.#element.style.border = "3px solid " + this.getHitbox_color()[1];
 
         this.#enemy.appendChild(this.#element);
+
+        this.#hp_bar = document.createElement("div");
+        this.#hp_bar.classList.add(
+            "hp_bar",
+            "progress"
+        );
+
+        this.#hp_progress = document.createElement("div")
+        this.#hp_progress.classList.add(
+            "progress-bar",
+            "theme-success"
+        );
+        this.#hp_progress.style.width = (this.#hp / this.#max_hp * 100) + "%";
+        this.#hp_progress.innerHTML = (this.#hp / this.#max_hp * 100) + "%";
+
+        this.#hp_bar.appendChild(this.#hp_progress);
+
         this.#enemy.appendChild(this.#hp_bar);
 
         this.#game_screen.appendChild(this.#enemy);
