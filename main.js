@@ -1,3 +1,4 @@
+
 const game_screen = document.querySelector(".game_screen");
 
 const OSZLOPOK = 12;
@@ -37,7 +38,6 @@ function map_generator(s, o) {
         var x = `<div class="row m-0">`;
 
         for (let j = 0; j < o; j++) {
-
             var type = "";
 
             for (let k = 0; k < tiles.length; k++) {
@@ -56,10 +56,82 @@ function map_generator(s, o) {
         x += `</div>`;
         game_screen.innerHTML += x;
     }
-};
+}
 
+function waypoint_calculator() {
+    var start = null;
+
+    for (let i = 0; start === null && i < SOROK; i++) {
+        for (let j = 0; start === null && j < OSZLOPOK; j++) {
+            if (String(map[i][j]) === "1") {
+                start = [i, j];
+            }
+        }
+    }
+
+    const iranyok = [
+        [0, 1],
+        [1, 0],
+        [0, -1],
+        [-1, 0]
+    ];
+
+    var vanTovabb = true;
+    var aktualis = start;
+    var utolsoIrany = null;
+    var jartTile = [start[0] + "," + start[1]];
+    var waypointok = [start];
+
+    while (vanTovabb) {
+        vanTovabb = false;
+        var leptunk = false;
+
+        for (let i = 0; !leptunk && i < iranyok.length; i++) {
+            var ujSor = aktualis[0] + iranyok[i][0];
+            var ujOszlop = aktualis[1] + iranyok[i][1];
+            var kulcs = ujSor + "," + ujOszlop;
+
+            if (
+                ujSor >= 0 && ujSor < SOROK &&
+                ujOszlop >= 0 && ujOszlop < OSZLOPOK &&
+                String(map[ujSor][ujOszlop]) === "1" &&
+                !jartTile.includes(kulcs)
+            ) {
+                if (utolsoIrany !== null && utolsoIrany !== i) {
+                    waypointok.push(aktualis);
+                }
+
+                utolsoIrany = i;
+                aktualis = [ujSor, ujOszlop];
+                jartTile.push(kulcs);
+                leptunk = true;
+                vanTovabb = true;
+            }
+        }
+    }
+
+    console.log(waypointok);
+
+    waypointok.push(aktualis);
+
+    return waypointok;
+}
 
 var towers = [];
+
+function TowerRangeCalc(tx, ty, ex, ey) {
+    var dx = (ty + 0.5) - ex;
+    var dy = (tx + 0.5) - ey;
+
+    return dx * dx + dy * dy;
+}
+
+function tamadas(enemy, torony) {
+    if(!enemy.isDead() && torony.getCooldown() <= 0){
+        enemy.takeDamage(torony.getDamage());
+        torony.setCooldown(torony.getFireRate());
+    }
+}
 
 function towerUpgrade(id) {
     if (towers[id]) {
@@ -70,11 +142,9 @@ function towerUpgrade(id) {
 function toronyLerakas(i, j, elem) {
     if (map[i][j] === '4') {
         const tower = towers.find(t => t.x === i && t.y === j);
-
         if (tower) {
             tower.upgrade();
         }
-
         return;
     }
 
@@ -94,82 +164,23 @@ function toronyLerakas(i, j, elem) {
     kijelzo_frissites();
 }
 
-function waypoint_calculator() {
-    var start = null;
-    for (let i = 0; start === null && i < SOROK; i++) {
-        for (let j = 0; start === null && j < OSZLOPOK; j++) {
-            if (String(map[i][j]) === "1") {
-                start = [i, j];
-            }
-        }
-    }
-
-    const iranyok = [
-        [0, 1],
-        [1, 0],
-        [0, -1],
-        [-1, 0]
-    ];
-
-    var vanTovabb = true;
-
-    var aktualis = start;
-    var utolsoIrany = null;
-    var jartTile = [start[0] + "," + start[1]];
-
-    var waypointok = [start];
-
-    while (vanTovabb) {
-        vanTovabb = false;
-        var leptunk = false;
-
-        for (let i = 0; !leptunk && i < iranyok.length; i++) {
-
-            var ujSor = aktualis[0] + iranyok[i][0];
-            var ujOszlop = aktualis[1] + iranyok[i][1];
-
-            var kulcs = ujSor + "," + ujOszlop;
-
-            if (
-                ujSor >= 0 && ujSor < SOROK &&
-                ujOszlop >= 0 && ujOszlop < OSZLOPOK &&
-                String(map[ujSor][ujOszlop]) === "1" &&
-                !jartTile.includes(kulcs)
-            ) {
-                if (utolsoIrany !== null && utolsoIrany !== i) {
-                    waypointok.push(aktualis);
-                }
-                utolsoIrany = i;
-                aktualis = [ujSor, ujOszlop];
-                jartTile.push(kulcs);
-                leptunk = true;
-                vanTovabb = true;
-            }
-        }
-    }
-    console.log(waypointok);
-
-    waypointok.push(aktualis);
-    return waypointok;
-};
-
-map_generator(SOROK, OSZLOPOK);
-
-var waypointok = waypoint_calculator();
+var waypointok = [];
 var enemyk = [];
 
 function enemy_letrehozas() {
     var x = waypointok[0][1] + 0.5;
     var y = waypointok[0][0] + 0.5;
     var enemy = new Enemy(x, y, game_screen, wave_colors[wave - 1]);
+
     enemyk.push(enemy);
 }
 
-var SEBESSEG = 13;
+var SEBESSEG = 1.5;
 var SPAWN_IDO = 1;
 
 var spawnSzamlalo = 1;
 var jatek = null;
+var tamad = null;
 
 var isWaveOver = false;
 var enemykDarabszama = 0;
@@ -183,9 +194,14 @@ function kijelzo_frissites() {
 
 function jatek_leallitas() {
     clearInterval(jatek);
+
     jatek = null;
     isWaveOver = false;
 }
+
+map_generator(SOROK, OSZLOPOK);
+
+waypointok = waypoint_calculator();
 
 document.querySelector(".start").addEventListener("click", () => {
     if (jatek !== null) {
@@ -197,13 +213,14 @@ document.querySelector(".start").addEventListener("click", () => {
     jatek = setInterval(() => {
         var most = Date.now();
         var dt = Math.min((most - ido) / 1000, 0.05);
-        ido = most;
 
+        ido = most;
         spawnSzamlalo += dt;
 
-        if(enemykDarabszama == 5){
+        if (enemykDarabszama == 1) {
             isWaveOver = true;
-            if(game_screen.querySelectorAll(".enemy").length == 0){
+
+            if (game_screen.querySelectorAll(".enemy").length == 0) {
                 alert("A(z) " + wave + ". vege!");
                 jatek_leallitas();
             }
@@ -224,18 +241,51 @@ document.querySelector(".start").addEventListener("click", () => {
             if (enemyk[i].veget_ert()) {
                 enemyk[i].torol();
                 enemyk.splice(i, 1);
+
                 enemykDarabszama--;
                 elet--;
+
                 kijelzo_frissites();
+            }
+        }
+
+        for (let i = 0; i < towers.length; i++) {
+            towers[i].setCooldown((towers[i].getCooldown() - dt));
+
+            var range = towers[i].getRange() * towers[i].getRange();
+
+            for (let j = 0; j < enemyk.length; j++) {
+                var tavolsag = TowerRangeCalc(
+                    towers[i].getX(),
+                    towers[i].getY(),
+                    enemyk[j].getX(),
+                    enemyk[j].getY()
+                );
+
+                if (tavolsag <= range) {
+
+                    if (!enemyk[j].isDead()){
+                        tamadas(enemyk[j], towers[i]);
+                    } else {
+                        enemyk[j].torol();
+                        enemyk.splice(j, 1);
+
+                        enemykDarabszama--;
+
+                        kijelzo_frissites();
+                    }
+                }
             }
         }
 
         if (elet == 0) {
             elet = 15;
+
             jatek_leallitas();
+
             alert("Veszetettel!");
         }
-    }, 1);
+    }, 16);
 });
 
 kijelzo_frissites();
