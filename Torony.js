@@ -113,16 +113,53 @@ class Tower {
 
     createElement() {
         this.#element = document.createElement("div");
+        this.#element.classList.add("tower", "level-" + this.#level);
 
-        this.#element.classList.add(
-            "tower",
-            "level-" + this.#level
-        );
+        
+        this.#tile.appendChild(this.#element);
 
-        this.#element.addEventListener("click", () => {
-            towerUpgrade(this.#id);
+        this.#element.addEventListener("click", (e) => {
+            e.stopPropagation(); 
+
+            document.querySelector(".tower-menu")?.remove();
+
+            var doboz = document.createElement("div");
+            doboz.classList.add("tower-menu", "d-flex", "gap-1");
+            doboz.style.position = "absolute";
+          
+
+            doboz.addEventListener("click", (e) => e.stopPropagation());
+
+            var fejleszt = document.createElement("button");
+            fejleszt.classList.add("btn", "btn-success", "btn-sm", "fejleszt");
+            fejleszt.textContent = "Fejleszt";
+            fejleszt.addEventListener("click", (e) => {
+                e.stopPropagation();
+                this.upgrade();
+            });
+
+            var torles = document.createElement("button");
+            torles.classList.add("btn", "btn-danger", "btn-sm", "torles");
+            torles.textContent = "Törlés";
+            torles.addEventListener("click", (e) => {
+                e.stopPropagation();
+                doboz.remove();
+                this.#element.remove();
+                var index = towers.indexOf(this);
+                if (index !== -1) {
+                    towers.splice(index, 1);
+                }
+
+                map[this.#x][this.#y] = '0';
+
+                penz += 12;
+                kijelzo_frissites();
+            });
+
+            doboz.append(fejleszt, torles);
+            this.#tile.appendChild(doboz);
         });
 
-        this.#tile.appendChild(this.#element);
+        kijelzo_frissites();
     }
 }
