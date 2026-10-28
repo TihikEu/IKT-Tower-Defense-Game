@@ -11,7 +11,7 @@ var wave_colors = [
 ];
 
 var elet = 15;
-var penz = 250;
+var penz = 1000;
 
 var tiles = [
     [0, "grass"],
@@ -133,10 +133,50 @@ function tamadas(enemy, torony) {
     }
 }
 
-function towerUpgrade(id) {
-    if (towers[id]) {
-        towers[id].upgrade();
-    }
+function towerInfos(id){
+    document.querySelector(".towerInfos").innerHTML = 
+    `<div class="d-flex justify-content-between align-items-center p-3 border">
+        <div class="d-flex align-items-center gap-5 w-75">
+            <p class="m-0">Damage: <span class="ms-5">${towers[id].getDamage()}</span></p>
+            <span>|</span>
+            <span>${(towers[id].getDamage_level() === 3) ? '<i>Maxed out - level </i>' + towers[id].getDamage_level() : 'level ' + towers[id].getDamage_level() + ' --> next level: ' + + towers[id].getUpgradeCosts()[0] + ' $'}</span>
+        </div>
+        <button class="btn" onclick="towerDamageUpgrade(${id})">Fejlesztes</button>
+    </div>
+    <div class="d-flex justify-content-between align-items-center p-3 border">
+        <div class="d-flex align-items-center gap-5 w-75">
+            <p class="m-0">Firerate: <span class="ms-5">${towers[id].getFireRate()}</span></p>
+            <span>|</span>
+            <span>${(towers[id].getFirerate_level() === 3) ? '<i>Maxed out - level </i>' + towers[id].getFirerate_level() : 'level ' + towers[id].getFirerate_level() + ' --> next level: ' + + towers[id].getUpgradeCosts()[1] + ' $'}</span>
+        </div>
+        <button class="btn" onclick="towerFirerateUpgrade(${id})">Fejlesztes</button>
+    </div>
+    <div class="d-flex justify-content-between align-items-center p-3 border">
+        <div class="d-flex align-items-center gap-5 w-75">
+            <p class="m-0">Range: <span class="ms-5">${towers[id].getRange()}</span></p>
+            <span>|</span>
+            <span>${(towers[id].getRange_level() === 3) ? '<i>Maxed out - level </i>' + towers[id].getRange_level() : 'level ' + towers[id].getRange_level() + ' --> next level: ' + + towers[id].getUpgradeCosts()[2] + ' $'}</span>
+        </div>
+        <button class="btn" onclick="towerRangeUpgrade(${id})">Fejlesztes</button>
+    </div>`;
+}
+
+function towerDamageUpgrade(id) {
+    towers[id].upgradeDamage(penz);
+    kijelzo_frissites();
+    towerInfos(id);
+}
+
+function towerFirerateUpgrade(id) {
+    towers[id].upgradeFirerate(penz);
+    kijelzo_frissites();
+    towerInfos(id);
+}
+
+function towerRangeUpgrade(id) {
+    towers[id].upgradeRange(penz);
+    kijelzo_frissites();
+    towerInfos(id);
 }
 
 function toronyLerakas(i, j, elem) {
@@ -153,15 +193,60 @@ function toronyLerakas(i, j, elem) {
         return;
     }
 
-    penz -= 25;
-    map[i][j] = '4';
+    document.querySelectorAll(".build").forEach(b => b.remove());
+    document.querySelectorAll(".tower-menu").forEach(tm => tm.remove());
 
-    const id = towers.length;
-    const tower = new Tower(i, j, elem, id);
+    const doboz = document.createElement("div");
+    doboz.classList.add("build", "d-flex", "gap-1");
+    doboz.style.position = "absolute";
+    doboz.style.zIndex = "1000";
 
-    towers.push(tower);
+    doboz.addEventListener("click", (e) => {
+        e.stopPropagation();
+        doboz.remove();
+    });
 
-    kijelzo_frissites();
+    const epit = document.createElement("button");
+    epit.classList.add("btn", "epit");
+    epit.textContent = "Epit";
+
+    epit.addEventListener("click", (e) => {
+        e.stopPropagation();
+
+        if (penz < 25) {
+            alert("Nincs elég pénzed!");
+            doboz.remove();
+            return;
+        }
+
+        const infos = document.querySelector(".towerInfos");
+        if (infos) {
+            infos.innerHTML = "";
+        }
+
+        penz -= 25;
+        map[i][j] = '4';
+
+        const id = towers.length;
+        const tower = new Tower(i, j, elem, id);
+        towers.push(tower);
+
+        kijelzo_frissites();
+        doboz.remove();
+    });
+
+    const megse = document.createElement("button");
+    megse.classList.add("btn", "megse");
+    megse.textContent = "Mégse";
+    megse.addEventListener("click", (e) => {
+        e.stopPropagation();
+        doboz.remove();
+    });
+
+    doboz.appendChild(epit);
+    doboz.appendChild(megse);
+
+    elem.appendChild(doboz);
 }
 
 var waypointok = [];
@@ -189,7 +274,7 @@ function kijelzo_frissites() {
     document.querySelector(".enemykSzama").innerHTML = enemykDarabszama + " db";
     document.querySelector(".wave").innerHTML = wave + ".";
     document.querySelector(".elet").innerHTML = elet;
-    document.querySelector(".penz").innerHTML = penz;
+    document.querySelector(".penz").innerHTML = penz + " $";
 }
 
 function jatek_leallitas() {
