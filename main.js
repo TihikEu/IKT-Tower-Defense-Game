@@ -1,8 +1,4 @@
-
 const game_screen = document.querySelector(".game_screen");
-
-const OSZLOPOK = 12;
-const SOROK = 9;
 
 var wave = 1;
 
@@ -17,25 +13,30 @@ var tiles = [
     [0, "grass"],
     [1, "path"],
     [2, "tree"],
-    [3, "castle"],
-    [4, "tower"]
+    [3, "end"],
+    [4, "tower"],
+    [5, "stone"],
+    [6, "water"]
 ];
 
 var map = [
-    ['0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '2', '0'],
-    ['0', '1', '0', '0', '2', '0', '0', '1', '1', '1', '1', '0'],
-    ['0', '1', '1', '1', '1', '1', '0', '1', '0', '0', '1', '0'],
-    ['0', '0', '0', '0', '0', '1', '1', '1', '0', '2', '1', '0'],
-    ['0', '1', '1', '1', '0', '0', '0', '0', '0', '0', '1', '0'],
-    ['2', '1', '0', '1', '1', '1', '1', '1', '1', '1', '1', '0'],
-    ['0', '1', '0', '0', '0', '2', '0', '0', '0', '0', '0', '0'],
-    ['0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '3', '0'],
-    ['0', '0', '0', '2', '0', '0', '0', '0', '0', '0', '0', '0']
+    ['6', '6', '0', '5', '0', '0', '6', '6', '6', '0', '2', '0', '0', '0'],
+    ['0', '0', '2', '0', '0', '0', '0', '0', '2', '0', '5', '0', '0', '0'],
+    ['1', '1', '1', '0', '2', '0', '0', '0', '0', '0', '0', '0', '0', '0'],
+    ['0', '0', '1', '0', '0', '1', '1', '1', '1', '0', '0', '0', '0', '0'],
+    ['2', '0', '1', '0', '0', '1', '2', '0', '1', '0', '0', '1', '1', '3'],
+    ['5', '0', '1', '1', '1', '1', '0', '0', '1', '0', '0', '1', '0', '0'],
+    ['0', '0', '0', '0', '0', '0', '0', '0', '1', '1', '1', '1', '0', '0'],
+    ['6', '0', '0', '2', '0', '6', '6', '0', '2', '5', '0', '0', '0', '0']
 ];
 
+const SOROK = map.length;
+const OSZLOPOK = map[0].length;
+
 function map_generator(s, o) {
+    var x = "";
     for (let i = 0; i < s; i++) {
-        var x = `<div class="row m-0">`;
+        x += `<div class="row m-0">`;
 
         for (let j = 0; j < o; j++) {
             var type = "";
@@ -48,16 +49,20 @@ function map_generator(s, o) {
 
             if (type === "grass") {
                 x += `<div class="oszlop tile ${type} s${i}o${j} col p-0" onclick="toronyLerakas(${i}, ${j}, this)"></div>`;
+            } else if (type === "tree") {
+                x += `<div class="oszlop tile grass col p-0"><div class="tree"></div></div>`;
+            } else if (type === "stone"){
+                x += `<div class="oszlop tile grass col p-0"><div class="stone"></div></div>`;
             } else {
                 x += `<div class="oszlop tile ${type} col p-0"></div>`;
             }
         }
 
         x += `</div>`;
-        game_screen.innerHTML += x;
     }
+    game_screen.innerHTML = x;
 }
-
+ 
 function waypoint_calculator() {
     var start = null;
 
@@ -94,7 +99,7 @@ function waypoint_calculator() {
             if (
                 ujSor >= 0 && ujSor < SOROK &&
                 ujOszlop >= 0 && ujOszlop < OSZLOPOK &&
-                String(map[ujSor][ujOszlop]) === "1" &&
+                (String(map[ujSor][ujOszlop]) === "1" || String(map[ujSor][ujOszlop]) === "3") &&
                 !jartTile.includes(kulcs)
             ) {
                 if (utolsoIrany !== null && utolsoIrany !== i) {
@@ -109,8 +114,6 @@ function waypoint_calculator() {
             }
         }
     }
-
-    console.log(waypointok);
 
     waypointok.push(aktualis);
 
@@ -134,8 +137,9 @@ function tamadas(enemy, torony) {
 }
 
 function towerInfos(id){
+    document.querySelector(".towerInfos").classList.remove("d-none");
     document.querySelector(".towerInfos").innerHTML = 
-    `<div class="d-flex justify-content-between align-items-center p-3 border">
+    `<div class="rounded-2 d-flex justify-content-between align-items-center bg-1 p-5">
         <div class="d-flex align-items-center gap-5 w-75">
             <p class="m-0">Damage: <span class="ms-5">${towers[id].getDamage()}</span></p>
             <span>|</span>
@@ -143,7 +147,8 @@ function towerInfos(id){
         </div>
         <button class="btn" onclick="towerDamageUpgrade(${id})">Fejlesztes</button>
     </div>
-    <div class="d-flex justify-content-between align-items-center p-3 border">
+
+    <div class="rounded-2 d-flex justify-content-between align-items-center bg-1 p-5">
         <div class="d-flex align-items-center gap-5 w-75">
             <p class="m-0">Firerate: <span class="ms-5">${towers[id].getFireRate()}</span></p>
             <span>|</span>
@@ -151,7 +156,8 @@ function towerInfos(id){
         </div>
         <button class="btn" onclick="towerFirerateUpgrade(${id})">Fejlesztes</button>
     </div>
-    <div class="d-flex justify-content-between align-items-center p-3 border">
+
+    <div class="rounded-2 d-flex justify-content-between align-items-center bg-1 p-5">
         <div class="d-flex align-items-center gap-5 w-75">
             <p class="m-0">Range: <span class="ms-5">${towers[id].getRange()}</span></p>
             <span>|</span>
@@ -180,6 +186,7 @@ function towerRangeUpgrade(id) {
 }
 
 function toronyLerakas(i, j, elem) {
+    document.querySelector(".towerInfos").classList.add("d-none");
     if (map[i][j] === '4') {
         const tower = towers.find(t => t.x === i && t.y === j);
         if (tower) {
@@ -215,7 +222,7 @@ function toronyLerakas(i, j, elem) {
 
         if (penz < 25) {
             alert("Nincs elég pénzed!");
-            doboz.remove();
+            doboz.remove(); 
             return;
         }
 
@@ -260,28 +267,23 @@ function enemy_letrehozas() {
     enemyk.push(enemy);
 }
 
-var SEBESSEG = 1.5;
-var SPAWN_IDO = 1;
+function vegmezon_van(enemy) {
+    var sor = Math.floor(enemy.getY());
+    var oszlop = Math.floor(enemy.getX());
+
+    return String(map[sor][oszlop]) === "3";
+}
+
+var SEBESSEG = 1;
+var SPAWN_IDO = 1.5;
 
 var spawnSzamlalo = 1;
 var jatek = null;
 var tamad = null;
 
-var isWaveOver = false;
-var enemykDarabszama = 0;
-
 function kijelzo_frissites() {
-    document.querySelector(".enemykSzama").innerHTML = enemykDarabszama + " db";
-    document.querySelector(".wave").innerHTML = wave + ".";
     document.querySelector(".elet").innerHTML = elet;
-    document.querySelector(".penz").innerHTML = penz + " $";
-}
-
-function jatek_leallitas() {
-    clearInterval(jatek);
-
-    jatek = null;
-    isWaveOver = false;
+    document.querySelector(".penz").innerHTML = penz;
 }
 
 map_generator(SOROK, OSZLOPOK);
@@ -302,16 +304,7 @@ document.querySelector(".start").addEventListener("click", () => {
         ido = most;
         spawnSzamlalo += dt;
 
-        if (enemykDarabszama == 1) {
-            isWaveOver = true;
-
-            if (game_screen.querySelectorAll(".enemy").length == 0) {
-                alert("A(z) " + wave + ". vege!");
-                jatek_leallitas();
-            }
-        }
-
-        if (spawnSzamlalo >= SPAWN_IDO && !isWaveOver) {
+        if (spawnSzamlalo >= SPAWN_IDO) {
             spawnSzamlalo -= SPAWN_IDO;
 
             enemy_letrehozas();
@@ -323,7 +316,7 @@ document.querySelector(".start").addEventListener("click", () => {
         for (let i = enemyk.length - 1; i >= 0; i--) {
             enemyk[i].lep(SEBESSEG * dt);
 
-            if (enemyk[i].veget_ert()) {
+            if (enemyk[i].veget_ert() || vegmezon_van(enemyk[i])) {
                 enemyk[i].torol();
                 enemyk.splice(i, 1);
 
@@ -354,8 +347,7 @@ document.querySelector(".start").addEventListener("click", () => {
                     } else {
                         enemyk[j].torol();
                         enemyk.splice(j, 1);
-
-                        enemykDarabszama--;
+                        penz += 5;
 
                         kijelzo_frissites();
                     }
