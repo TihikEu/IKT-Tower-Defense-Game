@@ -198,6 +198,8 @@ class Tower {
         this.#tile.appendChild(this.#element);
 
         this.#element.addEventListener("click", (e) => {
+            document.querySelector(".towerInfos").classList.add("d-none");
+
             e.stopPropagation();
 
             document.querySelector(".tower-menu")?.remove();
