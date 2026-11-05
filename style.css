@@ -4,20 +4,15 @@ body{
     font-weight: 400;
     font-size: 12px;
     line-height: 1.5;
+    max-height: 100vh;
 }
 
 button{
+    font-size: 12px !important;
     border-radius: 2px !important;
 }
 
-.tile{
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-.game_screen {
+.screen_body {
     position: relative;
 }
 
@@ -25,84 +20,116 @@ button{
     margin: 0;
 }
 
+.towerInfos{
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    top: 10px;
+    right: 10px;
+    background-color: #0c162093;
+    padding: 10px !important;
+}
+
+/* -- Tile -- */
+
 .tile{
     width: 100%;
     aspect-ratio: 1;
 }
 
+.path{
+    background-color: #d9b36c;
+    border: 3px solid #a8823b2c;
+}
+
+.end{
+    background-color: #8f8f8f;
+    border: 3px solid #4b4b4b21;
+}
+
 .grass{
     background-color: #20be67;
-    border: 2px solid rgb(29, 134, 76, 0.349);
+    border: 3px solid rgba(29, 134, 76, 0.137);
 }
-.grass:hover{
-    background-color: #2ce07d;
+
+.water{
+    background-color: #2077be;
+    border: 3px solid rgba(38, 80, 170, 0.137);
+}
+
+.grass:not(:has(.tree, .stone)):hover{
+    background-color: #21ce6f;
     cursor: pointer;
 }
 
+.tile:has(.tree, .stone, .tower) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tree {
+    width: 70%;
+    aspect-ratio: 1;
+    background-color: #288f53;
+    border: 3px solid #1b613059;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.stone {
+    width: 40%;
+    aspect-ratio: 1;
+    background-color: #848d9c;
+    border: 3px solid #6a7888;
+    pointer-events: none;
+}
+
+/* -- Tower -- */
+
 .tower {
-    position: absolute;
     pointer-events: auto;
     aspect-ratio: 1;
-    width: 4.5%;
 }
-.tower.level-1 {
+
+.tower.damage_level-1 {
     background-color: #1930b6;
-    border: 3px solid #2a6dff;
-    border-radius: 50%;
-    transform: translate(28%, 28%);
-    width: 5%;
+    border: 4px solid #2a6dff;
 }
-.tower.level-2 {
+.tower.damage_level-2 {
     background-color: #7e1e46;
-    border: 3px solid #d64481;
-    transform: translate(38%, 38%);
+    border: 4px solid #d64481;
 }
-.tower.level-3 {
-    background-color: #5e2286;
-    border: 3px solid #b467fc;
-    transform: translate(38%, 38%) rotate(45deg);
+.tower.damage_level-3 {
+    background-color: #7825af;
+    border: 4px solid #b467fc;
 }
 
-/* ai: a torony hatótávját mutató kör */
-.tower_range {
-    position: absolute;
-    transform: translate(-50%, -50%);
-    border: 1px dashed rgba(255, 255, 255, 0.6);
-    background: rgba(255, 255, 255, 0.08);
+.tower.firerate_level-1 {
+    width: 50%;
+}
+.tower.firerate_level-2 {
+    width: 52.5%;
+}
+.tower.firerate_level-3 {
+    width: 55%;
+}
+
+.tower.range_level-1{
     border-radius: 50%;
-    pointer-events: none;
+}
+.tower.range_level-2{
+    border-radius: 0%;
 }
 
-/* ai: lövedék */
-.projectile {
-    position: absolute;
-    width: 1.5%;
-    aspect-ratio: 1;
-    transform: translate(-50%, -50%);
-    background: #ffd84a;
-    border: 2px solid #fff3b0;
-    border-radius: 50%;
-    box-shadow: 0 0 6px #ffd84a;
-    pointer-events: none;
-    z-index: 5;
+.tower.range_level-3{
+    rotate: 45deg;
 }
 
-.path{
-    background-color: #d9b36c;
-    border: 2px solid #8b6e372c;
-}
-.tree{
-    background-color: #288f53;
-    border: 2px solid #1b613059;
-}
-.castle{
-    background-color: #8f8f8f;
-    border: 2px solid #4b4b4b21;
-}
+/* -- Enemy -- */
 
 .enemy {
     position: absolute;
-    width: 5%;
+    width: 4%;
     aspect-ratio: 1;
     transform: translate(-50%, -50%);
     pointer-events: none;
@@ -112,4 +139,19 @@ button{
     width: 100%;
     height: 100%;
     border-radius: 50%;
+    margin-bottom: 3px;
+}
+
+.hp_bar{
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    border-radius: 0 !important;
+    border: none !important;
+    font-size: 10px;
+}
+
+.progress-bar{
+    color: #000 !important;
+    font-weight: 700 !important;
 }
