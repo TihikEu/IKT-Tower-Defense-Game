@@ -7,7 +7,7 @@ var wave_colors = [
 ];
 
 var elet = 15;
-var penz = 1000;
+var penz = 100;
 
 var tiles = [
     [0, "grass"],
@@ -274,12 +274,14 @@ function vegmezon_van(enemy) {
     return String(map[sor][oszlop]) === "3";
 }
 
-var SEBESSEG = 1;
+var SEBESSEG = .9;
 var SPAWN_IDO = 1.5;
 
 var spawnSzamlalo = 1;
 var jatek = null;
 var tamad = null;
+
+var enemykDarabszama = 0;
 
 function kijelzo_frissites() {
     document.querySelector(".elet").innerHTML = elet;
@@ -289,6 +291,12 @@ function kijelzo_frissites() {
 map_generator(SOROK, OSZLOPOK);
 
 waypointok = waypoint_calculator();
+
+document.querySelector(".stop").addEventListener('click', ()=> {
+      clearInterval(jatek);
+            jatek = null;
+            kijelzo_frissites();
+})
 
 document.querySelector(".start").addEventListener("click", () => {
     if (jatek !== null) {
@@ -347,7 +355,7 @@ document.querySelector(".start").addEventListener("click", () => {
                     } else {
                         enemyk[j].torol();
                         enemyk.splice(j, 1);
-                        penz += 5;
+                        penz += 15;
 
                         kijelzo_frissites();
                     }
@@ -356,10 +364,14 @@ document.querySelector(".start").addEventListener("click", () => {
         }
 
         if (elet == 0) {
+            clearInterval(jatek);
+            document.querySelectorAll(".enemy").forEach(b => b.remove());
+            document.querySelectorAll(".build").forEach(b => b.remove());
+            document.querySelectorAll(".tower-menu").forEach(tm => tm.remove());
+            jatek = null;
             elet = 15;
-
-            jatek_leallitas();
-
+            penz = 100;
+            kijelzo_frissites();
             alert("Veszetettel!");
         }
     }, 16);
