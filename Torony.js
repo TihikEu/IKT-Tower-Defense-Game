@@ -6,7 +6,7 @@ class Tower {
     #id;
 
     #damage_level = 1;
-    #damage = 15;
+    #damage = 20    ;
 
     #firerate_level = 1;
     #firerate = 1.5;
@@ -20,7 +20,7 @@ class Tower {
 
     #value = 15;
 
-    #upgradesCosts = [10, 15, 20];
+    #upgradesCosts = [50, 75, 100];
 
     constructor(x, y, tile, id) {
         this.setX(x);
@@ -124,7 +124,7 @@ class Tower {
     }
 
     upgradeFirerate() {
-        const cost = this.#upgradesCosts[2];
+        const cost = this.#upgradesCosts[1];
 
         if (penz < cost) {
             alert("Nincs eleg penzed ehez a fejleszteshez!");
@@ -155,7 +155,7 @@ class Tower {
     }
 
     upgradeRange() {
-        const cost = this.#upgradesCosts[1];
+        const cost = this.#upgradesCosts[2];
 
         if (penz < cost) {
             alert("Nincs eleg penzed ehez a fejleszteshez!");
