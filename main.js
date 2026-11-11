@@ -1,13 +1,16 @@
 const game_screen = document.querySelector(".game_screen");
 
 var wave = 1;
+var waveInfos = [
+    [10, 1, 1] // db, speed, hp || 1. wave
+]
 
 var wave_colors = [
     ["#8a2e42", "#df3551"],
 ];
 
 var elet = 15;
-var penz = 100;
+var penz = 1000;
 
 var tiles = [
     [0, "grass"],
@@ -274,18 +277,22 @@ function vegmezon_van(enemy) {
     return String(map[sor][oszlop]) === "3";
 }
 
-var SEBESSEG = .9;
-var SPAWN_IDO = 1.5;
+var SEBESSEG = 1;
+var SPAWN_IDO = .5;
 
 var spawnSzamlalo = 1;
 var jatek = null;
 var tamad = null;
+
+var waveIsOver = false;
+var meghalt = 0;
 
 var enemykDarabszama = 0;
 
 function kijelzo_frissites() {
     document.querySelector(".elet").innerHTML = elet;
     document.querySelector(".penz").innerHTML = penz;
+    document.querySelector(".wave").innerHTML = wave;
 }
 
 map_generator(SOROK, OSZLOPOK);
@@ -312,7 +319,15 @@ document.querySelector(".start").addEventListener("click", () => {
         ido = most;
         spawnSzamlalo += dt;
 
-        if (spawnSzamlalo >= SPAWN_IDO) {
+        if(meghalt == waveInfos[0][0]){
+            waveIsOver = true;
+            setTimeout(5);
+            waveInfos[0][0] += 5;
+            waveIsOver = false;
+            meghalt = 0;
+        }
+
+        if (spawnSzamlalo >= SPAWN_IDO && enemykDarabszama !== waveInfos[0][0]) {
             spawnSzamlalo -= SPAWN_IDO;
 
             enemy_letrehozas();
@@ -328,8 +343,8 @@ document.querySelector(".start").addEventListener("click", () => {
                 enemyk[i].torol();
                 enemyk.splice(i, 1);
 
-                enemykDarabszama--;
                 elet--;
+                meghalt++;
 
                 kijelzo_frissites();
             }
@@ -356,6 +371,7 @@ document.querySelector(".start").addEventListener("click", () => {
                         enemyk[j].torol();
                         enemyk.splice(j, 1);
                         penz += 15;
+                        meghalt++;
 
                         kijelzo_frissites();
                     }
