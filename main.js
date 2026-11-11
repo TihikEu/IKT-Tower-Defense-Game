@@ -54,7 +54,7 @@ function map_generator(s, o) {
                 x += `<div class="oszlop tile ${type} s${i}o${j} col p-0" onclick="toronyLerakas(${i}, ${j}, this)"></div>`;
             } else if (type === "tree") {
                 x += `<div class="oszlop tile grass col p-0"><div class="tree"></div></div>`;
-            } else if (type === "stone"){
+            } else if (type === "stone") {
                 x += `<div class="oszlop tile grass col p-0"><div class="stone"></div></div>`;
             } else {
                 x += `<div class="oszlop tile ${type} col p-0"></div>`;
@@ -65,7 +65,7 @@ function map_generator(s, o) {
     }
     game_screen.innerHTML = x;
 }
- 
+
 function waypoint_calculator() {
     var start = null;
 
@@ -133,16 +133,16 @@ function TowerRangeCalc(tx, ty, ex, ey) {
 }
 
 function tamadas(enemy, torony) {
-    if(!enemy.isDead() && torony.getCooldown() <= 0){
+    if (!enemy.isDead() && torony.getCooldown() <= 0) {
         enemy.takeDamage(torony.getDamage());
         torony.setCooldown(torony.getFireRate());
     }
 }
 
-function towerInfos(id){
+function towerInfos(id) {
     document.querySelector(".towerInfos").classList.remove("d-none");
-    document.querySelector(".towerInfos").innerHTML = 
-    `<div class="rounded-2 d-flex justify-content-between align-items-center bg-1 p-5">
+    document.querySelector(".towerInfos").innerHTML =
+        `<div class="rounded-2 d-flex justify-content-between align-items-center bg-1 p-5">
         <div class="d-flex align-items-center gap-5 w-75">
             <p class="m-0">Damage: <span class="ms-5">${towers[id].getDamage()}</span></p>
             <span>|</span>
@@ -225,7 +225,7 @@ function toronyLerakas(i, j, elem) {
 
         if (penz < 25) {
             alert("Nincs elég pénzed!");
-            doboz.remove(); 
+            doboz.remove();
             return;
         }
 
@@ -265,7 +265,7 @@ var enemyk = [];
 function enemy_letrehozas() {
     var x = waypointok[0][1] + 0.5;
     var y = waypointok[0][0] + 0.5;
-    var enemy = new Enemy(x, y, game_screen, wave_colors[wave - 1]);
+    var enemy = new Enemy(x, y, game_screen, wave_colors[(wave - 1) % wave_colors.length]);
 
     enemyk.push(enemy);
 }
@@ -277,17 +277,33 @@ function vegmezon_van(enemy) {
     return String(map[sor][oszlop]) === "3";
 }
 
-var SEBESSEG = 1;
-var SPAWN_IDO = .5;
+function jatekVege() {
+    clearInterval(jatek);
+    jatek = null;
 
-var spawnSzamlalo = 1;
-var jatek = null;
-var tamad = null;
+    document.querySelectorAll(".enemy").forEach(b => b.remove());
+    document.querySelectorAll(".build").forEach(b => b.remove());
+    document.querySelectorAll(".tower-menu").forEach(tm => tm.remove());
 
-var waveIsOver = false;
-var meghalt = 0;
+    enemyk.length = 0;
+    waveIsOver = false;
+    waveInfos[0][0] = 10;
+    meghalt = 0;
+    enemykDarabszama = 0;
+    spawnSzamlalo = 1;
+    wave = 1;
+    elet = 15;
+    penz = 100;
 
-var enemykDarabszama = 0;
+    var timer = document.querySelector(".timer");
+    var hullam = document.querySelector(".hullam");
+    timer.classList.remove("d-block");
+    timer.classList.add("d-none");
+    hullam.classList.remove("d-none");
+    hullam.classList.add("d-block");
+
+    kijelzo_frissites();
+}
 
 function kijelzo_frissites() {
     document.querySelector(".elet").innerHTML = elet;
@@ -299,11 +315,24 @@ map_generator(SOROK, OSZLOPOK);
 
 waypointok = waypoint_calculator();
 
-document.querySelector(".stop").addEventListener('click', ()=> {
-      clearInterval(jatek);
-            jatek = null;
-            kijelzo_frissites();
+document.querySelector(".stop").addEventListener('click', () => {
+    clearInterval(jatek);
+    jatek = null;
+    kijelzo_frissites();
 })
+
+var SEBESSEG = 100;
+var SPAWN_IDO = .2;
+
+var spawnSzamlalo = 1;
+var jatek = null;
+var tamad = null;
+
+var waveIsOver = false;
+var meghalt = 0;
+var enemykDarabszama = 0;
+var waveTimer = 0;
+
 
 document.querySelector(".start").addEventListener("click", () => {
     if (jatek !== null) {
@@ -311,47 +340,63 @@ document.querySelector(".start").addEventListener("click", () => {
     }
 
     var ido = Date.now();
+    var hullam = document.querySelector(".wavver");
+    var timer = document.querySelector(".timer");
 
     jatek = setInterval(() => {
         var most = Date.now();
         var dt = Math.min((most - ido) / 1000, 0.05);
-
         ido = most;
-        spawnSzamlalo += dt;
 
-        if(meghalt == waveInfos[0][0]){
-            waveIsOver = true;
-            setTimeout(5);
-            waveInfos[0][0] += 5;
-            waveIsOver = false;
-            meghalt = 0;
-        }
 
-        if (spawnSzamlalo >= SPAWN_IDO && enemykDarabszama !== waveInfos[0][0]) {
-            spawnSzamlalo -= SPAWN_IDO;
+        if (waveIsOver) {
+            waveTimer -= dt;
+            if (waveTimer <= 0) {
+                waveIsOver = false;
+                spawnSzamlalo = SPAWN_IDO;
 
-            enemy_letrehozas();
-            enemykDarabszama++;
+                timer.classList.remove("d-block");
+                timer.classList.add("d-none");
+                hullam.classList.remove("d-none");
+                hullam.classList.add("d-block");
+            } else {
+                timer.textContent = "Next wave in: " + Math.ceil(waveTimer) + "s"; // A Math.ceil() felkerekit a legkozelebbi teljes szamra, szoval 1.3 => 2
+            }
+        } else {
+            spawnSzamlalo += dt;
 
-            kijelzo_frissites();
-        }
+            if (spawnSzamlalo >= SPAWN_IDO && enemykDarabszama < waveInfos[0][0]) {
+                spawnSzamlalo = 0;
 
-        for (let i = enemyk.length - 1; i >= 0; i--) {
-            enemyk[i].lep(SEBESSEG * dt);
-
-            if (enemyk[i].veget_ert() || vegmezon_van(enemyk[i])) {
-                enemyk[i].torol();
-                enemyk.splice(i, 1);
-
-                elet--;
-                meghalt++;
+                enemy_letrehozas();
+                enemykDarabszama++;
 
                 kijelzo_frissites();
             }
         }
 
+        for (let i = enemyk.length - 1; i >= 0; i--) {
+        if (enemyk[i].isDead()) {
+            enemyk[i].torol();
+            enemyk.splice(i, 1);
+            penz += 15;
+            meghalt++;
+            kijelzo_frissites();
+        } else {
+            enemyk[i].lep(SEBESSEG * dt);
+
+            if (enemyk[i].veget_ert() || vegmezon_van(enemyk[i])) {
+                enemyk[i].torol();
+                enemyk.splice(i, 1);
+                elet--;
+                meghalt++;
+                kijelzo_frissites();
+            }
+        }
+    }
+
         for (let i = 0; i < towers.length; i++) {
-            towers[i].setCooldown((towers[i].getCooldown() - dt));
+            towers[i].setCooldown(towers[i].getCooldown() - dt);
 
             var range = towers[i].getRange() * towers[i].getRange();
 
@@ -364,32 +409,36 @@ document.querySelector(".start").addEventListener("click", () => {
                 );
 
                 if (tavolsag <= range) {
-
-                    if (!enemyk[j].isDead()){
-                        tamadas(enemyk[j], towers[i]);
-                    } else {
-                        enemyk[j].torol();
-                        enemyk.splice(j, 1);
-                        penz += 15;
-                        meghalt++;
-
-                        kijelzo_frissites();
-                    }
+                    tamadas(enemyk[j], towers[i]);
                 }
             }
         }
 
-        if (elet == 0) {
-            clearInterval(jatek);
-            document.querySelectorAll(".enemy").forEach(b => b.remove());
-            document.querySelectorAll(".build").forEach(b => b.remove());
-            document.querySelectorAll(".tower-menu").forEach(tm => tm.remove());
-            jatek = null;
-            elet = 15;
-            penz = 100;
-            kijelzo_frissites();
-            alert("Veszetettel!");
+        
+
+        if (!waveIsOver && meghalt >= waveInfos[0][0]) {
+            waveIsOver = true;
+            wave++;  
+            waveInfos[0][0] = Math.ceil(waveInfos[0][0] * 1.5);
+            meghalt = 0;
+            enemykDarabszama = 0;
+            spawnSzamlalo = 0;
+            waveTimer = 10;
+
+            hullam.classList.remove("d-block");
+            hullam.classList.add("d-none");
+            timer.classList.remove("d-none");
+            timer.classList.add("d-block");
+            timer.textContent = "Next wave in: 10s";
         }
+
+        
+        if (elet <= 0 || wave > 5) {
+            var uzenet = elet <= 0 ? "Veszettél!" : "Nyertél!"
+            jatekVege();
+            setTimeout(() => alert(uzenet), 0);
+        }
+
     }, 16);
 });
 
