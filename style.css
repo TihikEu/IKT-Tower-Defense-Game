@@ -1,10 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Allura&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Oswald:wght@200..700&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Saira:ital,wght@0,100..900;1,100..900&family=Sen:wght@400..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Raleway:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300..700&display=swap');
 body{
-    font-family: "Roboto", sans-serif;
+    font-family: "Space Grotesk", sans-serif;
     font-weight: 400;
     font-size: 12px;
     line-height: 1.5;
     max-height: 100vh;
+    padding-top: 7px;
 }
 
 button{
@@ -20,15 +21,6 @@ button{
     margin: 0;
 }
 
-.towerInfos{
-    padding-left: 0px !important;
-    padding-right: 0px !important;
-    top: 10px;
-    right: 10px;
-    background-color: #0c162093;
-    padding: 10px !important;
-}
-
 /* -- Tile -- */
 
 .tile{
@@ -38,22 +30,22 @@ button{
 
 .path{
     background-color: #d9b36c;
-    border: 3px solid #a8823b2c;
+    border: 3px solid #a8823b18;
 }
 
 .end{
     background-color: #8f8f8f;
-    border: 3px solid #4b4b4b21;
+    border: 3px solid #4b4b4b10;
 }
 
 .grass{
     background-color: #20be67;
-    border: 3px solid rgba(29, 134, 76, 0.137);
+    border: 3px solid rgba(29, 134, 76, 0.082);
 }
 
 .water{
     background-color: #2077be;
-    border: 3px solid rgba(38, 80, 170, 0.137);
+    border: 3px solid rgba(48, 89, 177, 0.089);
 }
 
 .grass:not(:has(.tree, .stone)):hover{
@@ -71,7 +63,7 @@ button{
     width: 70%;
     aspect-ratio: 1;
     background-color: #288f53;
-    border: 3px solid #1b613059;
+    border: 5px solid #1b613059;
     border-radius: 50%;
     pointer-events: none;
 }
@@ -80,7 +72,7 @@ button{
     width: 40%;
     aspect-ratio: 1;
     background-color: #848d9c;
-    border: 3px solid #6a7888;
+    border: 5px solid #6a7888;
     pointer-events: none;
 }
 
@@ -93,15 +85,15 @@ button{
 
 .tower.damage_level-1 {
     background-color: #1930b6;
-    border: 4px solid #2a6dff;
+    border: 5px solid #2a6dff;
 }
 .tower.damage_level-2 {
     background-color: #7e1e46;
-    border: 4px solid #d64481;
+    border: 5px solid #d64481;
 }
 .tower.damage_level-3 {
     background-color: #7825af;
-    border: 4px solid #b467fc;
+    border: 5px solid #b467fc;
 }
 
 .tower.firerate_level-1 {
@@ -139,7 +131,7 @@ button{
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    margin-bottom: 3px;
+    margin-bottom: 5px;
 }
 
 .hp_bar{
@@ -151,7 +143,114 @@ button{
     font-size: 10px;
 }
 
-.progress-bar{
+.enemy .progress-bar{
     color: #000 !important;
     font-weight: 700 !important;
+}
+
+.screen_header, .towerInfos, .waveInfos, .gameInfos{
+    background-color: #060614;
+}
+
+.elet_hud, .penz_hud{
+    border: 5px solid #0a0a24cc;
+    background-color: #03030e;
+    padding: 10px;
+}
+
+.elet_hud div:first-of-type, .penz_hud div:first-of-type{
+    padding: 10px 13px 8px 13px;
+    background-color: #07071bcc;
+}
+
+.elet_hud div:first-of-type i, .penz_hud div:first-of-type i{
+    font-size: 18px !important;
+}
+
+.elet_content p:first-of-type, .penz_content p:first-of-type, .wave_hud p:first-of-type{
+    color: #ffffff;
+}
+
+.screen_body{
+    background-color: #0a0a24cc;
+}
+
+.timer{
+    width: 140px;
+}
+
+.towerInfos .upg{
+    border: 5px solid #0a0a24cc;
+    background-color: #03030e;
+}
+
+.upg, .upgradeButton, .elet_hud, .penz_hud{
+    border-radius: 6px !important;
+}
+
+.elet_hud div:first-of-type, .penz_hud div:first-of-type{
+    border-radius: 4px !important;
+}
+
+.upgradeButton{
+    padding: 2.2px;
+    border: 5px solid #865a17;
+    background-color: #c7ac52;
+    color: #000000;
+}
+
+.upgradeButton:hover{
+    background-color: #dbb22a;
+}
+
+.towerInfos h2, .waveInfos h2, .gameInfos h2, h1{
+    font-size: 18px;
+}
+
+.start, .stop{
+    border: 5px solid #0a0a24cc;
+    background-color: #03030e;
+}
+
+.start:hover, .stop:hover, .fastForward:hover, .normalForward:hover{
+    background-color: #07070c;
+}
+
+.start, .stop{
+    padding: 5px 20px;
+}
+
+.start i, .stop i{
+    font-size: 18px !important;
+}
+
+.cancel{
+    font-size: 20px !important;
+    background: none;
+    border: none;
+}
+
+.gameInfos{
+    padding-bottom: 22px !important;
+}
+
+footer .container, header .container{
+    background-color: #0a0a24cc !important;
+    padding: 0px !important;
+}
+
+header, footer{
+    background: none !important;
+}
+
+main .container{
+    padding: 0 !important;
+}
+
+body, main{
+    background-color: #000000;
+}
+
+main{
+    padding: 47px;
 }
