@@ -198,6 +198,9 @@ class Tower {
         this.#tile.appendChild(this.#element);
 
         this.#element.addEventListener("click", (e) => {
+
+            document.querySelector(".waveInfos").classList.remove("d-none");
+            document.querySelector(".gameInfos").classList.remove("d-none");
             document.querySelector(".towerInfos").classList.add("d-none");
 
             e.stopPropagation();
@@ -226,7 +229,7 @@ class Tower {
                 "btn-sm",
                 "fejleszt"
             );
-            fejleszt.textContent = "Fejlesztés";
+            fejleszt.textContent = "Upgrade";
 
             fejleszt.addEventListener("click", (e) => {
                 e.stopPropagation();
@@ -242,7 +245,7 @@ class Tower {
                 "btn-sm",
                 "torles"
             );
-            torles.textContent = "Törlés";
+            torles.textContent = "Delete";
 
             torles.addEventListener("click", (e) => {
                 e.stopPropagation();
