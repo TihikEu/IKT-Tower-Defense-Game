@@ -1,0 +1,81 @@
+@media (max-width: 1024px) {
+    main {
+        padding: 20px;
+    }
+
+    body {
+        font-size: 13px;
+    }
+
+    .screen_header {
+        row-gap: 16px;
+        padding: 16px 8px !important;
+    }
+
+    .screen_header .infos,
+    .screen_header .wave_hud,
+    .screen_header .gombok {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        gap: 16px !important;
+    }
+
+    .screen_header .gombok {
+        justify-content: center !important;
+    }
+
+    .screen_body {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 16px !important;
+        gap: 16px !important;
+    }
+
+    .game_screen {
+        width: 100% !important;
+    }
+
+    .screen_body > div:last-child {
+        width: 100% !important;
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        align-items: stretch !important;
+        gap: 16px !important;
+    }
+
+    .towerInfos,
+    .waveInfos,
+    .gameInfos {
+        flex: 1 1 280px;
+        width: auto !important;
+        padding: 16px !important;
+        gap: 12px !important;
+    }
+
+    .towerInfos {
+        flex-basis: 100%;
+    }
+
+    .towerInfos .upg {
+        padding: 12px !important;
+    }
+
+    .towerInfos .upg > div {
+        padding-bottom: 12px !important;
+    }
+
+    .towerInfos .upg p,
+    .towerInfos .upg span {
+        width: 100% !important;
+    }
+
+    .upgradeButton,
+    .build .btn {
+        padding: 10px;
+    }
+
+    .start, .stop {
+        padding: 10px 20px;
+    }
+}

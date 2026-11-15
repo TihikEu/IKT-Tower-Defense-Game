@@ -1,0 +1,110 @@
+.tower-basic { --fill: #1930b6; --edge: #2a6dff; }
+.tower-poison { --fill: #1f7a2e; --edge: #4be36a; }
+.tower-freeze { --fill: #1c7aa8; --edge: #7fe3ff; }
+.tower-cannon { --fill: #a8431a; --edge: #ff9a4a; }
+
+.game_screen .tower.tower-poison,
+.game_screen .tower.tower-freeze,
+.game_screen .tower.tower-cannon {
+    background-color: var(--fill);
+    border-color: var(--edge);
+}
+
+.tower-picker {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 4000;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.75);
+    padding: 16px;
+}
+
+.tower-picker.open {
+    display: flex;
+}
+
+.picker-box {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    background-color: #060614;
+    border: 5px solid #0a0a24cc;
+    border-radius: 6px;
+    color: #fff;
+}
+
+.picker-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
+}
+
+.picker-card {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px;
+    text-align: center;
+    color: #fff;
+    background-color: #03030e;
+    border: 5px solid #0a0a24cc;
+    border-radius: 6px !important;
+    cursor: pointer;
+}
+
+.picker-card:hover {
+    background-color: #07071bcc;
+    border-color: #865a17;
+}
+
+.picker-card.unaffordable {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.choice-icon {
+    display: block;
+    width: 44px;
+    aspect-ratio: 1;
+    background-color: var(--fill);
+    border: 5px solid var(--edge);
+}
+
+.picker-name {
+    font-size: 13px;
+}
+
+.picker-desc {
+    font-size: 11px;
+    opacity: 0.75;
+}
+
+.picker-cost {
+    font-size: 12px;
+    color: #c7ac52;
+}
+
+.enemy.enemy-runner {
+    width: 3.5%;
+}
+
+.enemy.enemy-brute {
+    width: 5.5%;
+}
+
+.enemy.poisoned .enemy_hitbox {
+    box-shadow: 0 0 8px 3px #4be36a;
+}
+
+.enemy.frozen .enemy_hitbox {
+    box-shadow: 0 0 8px 3px #7fe3ff;
+}
