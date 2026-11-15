@@ -15,6 +15,11 @@ class Enemy {
     #hp_bar;
     #hp_progress;
 
+    #poisonDps = 0;
+    #poisonTime = 0;
+    #slowFactor = 1;
+    #slowTime = 0;
+
     constructor(x, y, game_screen, hitbox_color) {
         this.setX(x);
         this.setY(y);
@@ -22,11 +27,30 @@ class Enemy {
         this.setHitbox_color(hitbox_color);
 
         this.#cel = 1;
-        this.#max_hp = 100;
+        this.#max_hp = this.baseHp();
         this.#hp = this.#max_hp;
 
         this.createElement();
         this.draw();
+    }
+
+    typeClass() {
+        return "enemy-normal";
+    }
+
+    baseHp() {
+        return 100;
+    }
+
+    speedMultiplier() {
+        return 1;
+    }
+
+    getReward() {
+        return 15;
+    }
+
+    onUpdate(dt) {
     }
 
     setX(x) {
@@ -55,28 +79,76 @@ class Enemy {
         return this.#hitbox_color;
     }
 
+    getSpeed() {
+        return this.speedMultiplier() * this.#slowFactor;
+    }
+
     takeDamage(dmg) {
         this.#hp -= dmg;
-
-        this.updateHp();
 
         if (this.isDead()) {
             this.#hp = 0;
         }
+
+        this.updateHp();
+    }
+
+    heal(amount) {
+        if (this.isDead()) {
+            return;
+        }
+
+        this.#hp = Math.min(this.#max_hp, this.#hp + amount);
+        this.updateHp();
+    }
+
+    applyPoison(dps, duration) {
+        this.#poisonDps = dps;
+        this.#poisonTime = duration;
+        this.#enemy.classList.add("poisoned");
+    }
+
+    applySlow(factor, duration) {
+        this.#slowFactor = factor;
+        this.#slowTime = duration;
+        this.#enemy.classList.add("frozen");
+    }
+
+    update(dt) {
+        if (this.#poisonTime > 0) {
+            this.#poisonTime -= dt;
+            this.takeDamage(this.#poisonDps * dt);
+
+            if (this.#poisonTime <= 0) {
+                this.#poisonDps = 0;
+                this.#enemy.classList.remove("poisoned");
+            }
+        }
+
+        if (this.#slowTime > 0) {
+            this.#slowTime -= dt;
+
+            if (this.#slowTime <= 0) {
+                this.#slowFactor = 1;
+                this.#enemy.classList.remove("frozen");
+            }
+        }
+
+        this.onUpdate(dt);
     }
 
     isDead() {
         return this.#hp <= 0;
     }
 
-    updateHp(){
-        this.#hp_progress.style.width =(this.#hp / this.#max_hp * 100) + "%";
+    updateHp() {
+        this.#hp_progress.style.width = (this.#hp / this.#max_hp * 100) + "%";
         this.#hp_progress.innerHTML = parseInt((this.#hp / this.#max_hp * 100));
     }
 
     createElement() {
         this.#enemy = document.createElement("div");
-        this.#enemy.classList.add("enemy");
+        this.#enemy.classList.add("enemy", this.typeClass());
 
         this.#element = document.createElement("div");
         this.#element.classList.add("enemy_hitbox");
@@ -91,7 +163,7 @@ class Enemy {
             "progress"
         );
 
-        this.#hp_progress = document.createElement("div")
+        this.#hp_progress = document.createElement("div");
         this.#hp_progress.classList.add(
             "progress-bar",
             "theme-success"
@@ -111,6 +183,8 @@ class Enemy {
     }
 
     lep(lepes) {
+        lepes = lepes * this.getSpeed();
+
         while (lepes > 0 && this.#cel < waypointok.length) {
             var celX = waypointok[this.#cel][1] + 0.5;
             var celY = waypointok[this.#cel][0] + 0.5;
