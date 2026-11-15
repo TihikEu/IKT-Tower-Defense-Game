@@ -81,7 +81,7 @@ class Enemy {
         this.#element = document.createElement("div");
         this.#element.classList.add("enemy_hitbox");
         this.#element.style.background = this.getHitbox_color()[0];
-        this.#element.style.border = "3px solid " + this.getHitbox_color()[1];
+        this.#element.style.border = "5px solid " + this.getHitbox_color()[1];
 
         this.#enemy.appendChild(this.#element);
 
@@ -97,7 +97,6 @@ class Enemy {
             "theme-success"
         );
         this.#hp_progress.style.width = (this.#hp / this.#max_hp * 100) + "%";
-        this.#hp_progress.innerHTML = parseInt((this.#hp / this.#max_hp * 100));
 
         this.#hp_bar.appendChild(this.#hp_progress);
 
