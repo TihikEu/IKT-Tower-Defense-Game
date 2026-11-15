@@ -2,7 +2,7 @@ const game_screen = document.querySelector(".game_screen");
 
 var wave = 1;
 var waveInfos = [
-    [10, 1, 1] // db, speed, hp || 1. wave
+    [10, 1, 100] // db, speed, hp || 1. wave
 ]
 
 var wave_colors = [
@@ -141,33 +141,47 @@ function tamadas(enemy, torony) {
 
 function towerInfos(id) {
     document.querySelector(".towerInfos").classList.remove("d-none");
+    document.querySelector(".waveInfos").classList.add("d-none");
+    document.querySelector(".gameInfos").classList.add("d-none");
+    
     document.querySelector(".towerInfos").innerHTML =
-        `<div class="rounded-2 d-flex justify-content-between align-items-center bg-1 p-5">
-        <div class="d-flex align-items-center gap-5 w-75">
-            <p class="m-0">Damage: <span class="ms-5">${towers[id].getDamage()}</span></p>
-            <span>|</span>
-            <span>${(towers[id].getDamage_level() === 3) ? '<i>Maxed out - level </i>' + towers[id].getDamage_level() : 'level ' + towers[id].getDamage_level() + ' --> next level: ' + + towers[id].getUpgradeCosts()[0] + ' $'}</span>
+
+    `<div class="w-100 d-flex justify-content-between align-items-center">
+        <h2 class="m-0">Tower Information</h2>
+        <button type="button" class="cancel fw-bold" onclick="closeTowerInfos()"><i class="bi bi-x"></i></button>
+    </div>
+    <div class="p-5 upg w-100">
+        <div class="d-flex flex-column align-items-start gap-3 w-100 pb-5">
+            <p class="m-0 w-50">Damage</p>
+            <p class="m-0 w-50"><span>${towers[id].getDamage()}</span> Damage / Shot</p>
+            <span class="w-50">${(towers[id].getDamage_level() !== 3) ? 'Level ' + towers[id].getDamage_level() + ' <i class="bi bi-arrow-right"></i> ' + (towers[id].getDamage_level() + 1) : 'Level ' + towers[id].getDamage_level() + ' <i class="bi bi-dash-lg"></i> Max'}</span>
         </div>
-        <button class="btn" onclick="towerDamageUpgrade(${id})">Fejlesztes</button>
+        <button type="button" class="upgradeButton w-100 fw-bold" onclick="towerDamageUpgrade(${id})">Damage ${(towers[id].getDamage_level() === 3) ? 'Maxed out' : 'upgrade <i class="bi bi-arrow-right"></i> ' + towers[id].getUpgradeCosts()[0] + ' $'}</button>
     </div>
 
-    <div class="rounded-2 d-flex justify-content-between align-items-center bg-1 p-5">
-        <div class="d-flex align-items-center gap-5 w-75">
-            <p class="m-0">Firerate: <span class="ms-5">${towers[id].getFireRate()}</span></p>
-            <span>|</span>
-            <span>${(towers[id].getFirerate_level() === 3) ? '<i>Maxed out - level </i>' + towers[id].getFirerate_level() : 'level ' + towers[id].getFirerate_level() + ' --> next level: ' + + towers[id].getUpgradeCosts()[1] + ' $'}</span>
+    <div class="p-5 upg w-100">
+        <div class="d-flex flex-column align-items-start gap-3 w-100 pb-5">
+            <p class="m-0 w-50">Firerate</p>
+            <p class="m-0 w-50"><span>${towers[id].getFireRate()} Fire / Sec</span></p>
+            <span class="w-50">${(towers[id].getFirerate_level() !== 3) ? 'Level ' + towers[id].getFirerate_level() + ' <i class="bi bi-arrow-right"></i> ' + (towers[id].getFirerate_level() + 1) : 'Level ' + towers[id].getFirerate_level() + ' <i class="bi bi-dash-lg"></i> Max'}</span>
         </div>
-        <button class="btn" onclick="towerFirerateUpgrade(${id})">Fejlesztes</button>
+        <button type="button" class="upgradeButton w-100 fw-bold" onclick="towerFirerateUpgrade(${id})">Firerate ${(towers[id].getFirerate_level() === 3) ? 'Maxed out' : 'upgrade <i class="bi bi-arrow-right"></i> ' + towers[id].getUpgradeCosts()[1] + ' $'}</button>
     </div>
 
-    <div class="rounded-2 d-flex justify-content-between align-items-center bg-1 p-5">
-        <div class="d-flex align-items-center gap-5 w-75">
-            <p class="m-0">Range: <span class="ms-5">${towers[id].getRange()}</span></p>
-            <span>|</span>
-            <span>${(towers[id].getRange_level() === 3) ? '<i>Maxed out - level </i>' + towers[id].getRange_level() : 'level ' + towers[id].getRange_level() + ' --> next level: ' + + towers[id].getUpgradeCosts()[2] + ' $'}</span>
+    <div class="p-5 upg w-100">
+        <div class="d-flex flex-column align-items-start gap-3 w-100 pb-5">
+            <p class="m-0 w-50">Range</p>
+            <p class="m-0 w-50"><span>${towers[id].getRange()}</span> Tiles range</p>
+            <span class="w-50">${(towers[id].getRange_level() !== 3) ? 'Level ' + towers[id].getRange_level() + ' <i class="bi bi-arrow-right"></i> ' + (towers[id].getRange_level() + 1) : 'Level ' + towers[id].getRange_level() + ' <i class="bi bi-dash-lg"></i> Max'}</span>
         </div>
-        <button class="btn" onclick="towerRangeUpgrade(${id})">Fejlesztes</button>
+        <button type="button" class="upgradeButton w-100 fw-bold" onclick="towerRangeUpgrade(${id})">Range ${(towers[id].getRange_level() === 3) ? 'Maxed out' : 'upgrade <i class="bi bi-arrow-right"></i> ' + towers[id].getUpgradeCosts()[2] + ' $'}</button>
     </div>`;
+}
+
+function closeTowerInfos(){
+    document.querySelector(".towerInfos").classList.add("d-none");
+    document.querySelector(".waveInfos").classList.remove("d-none");
+    document.querySelector(".gameInfos").classList.remove("d-none");
 }
 
 function towerDamageUpgrade(id) {
@@ -190,6 +204,8 @@ function towerRangeUpgrade(id) {
 
 function toronyLerakas(i, j, elem) {
     document.querySelector(".towerInfos").classList.add("d-none");
+    document.querySelector(".gameInfos").classList.remove("d-none");
+    document.querySelector(".waveInfos").classList.remove("d-none");
     if (map[i][j] === '4') {
         const tower = towers.find(t => t.x === i && t.y === j);
         if (tower) {
@@ -218,7 +234,7 @@ function toronyLerakas(i, j, elem) {
 
     const epit = document.createElement("button");
     epit.classList.add("btn", "epit");
-    epit.textContent = "Epit";
+    epit.textContent = "Build";
 
     epit.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -247,7 +263,7 @@ function toronyLerakas(i, j, elem) {
 
     const megse = document.createElement("button");
     megse.classList.add("btn", "megse");
-    megse.textContent = "Mégse";
+    megse.textContent = "Cancel";
     megse.addEventListener("click", (e) => {
         e.stopPropagation();
         doboz.remove();
@@ -302,6 +318,14 @@ function jatekVege() {
     hullam.classList.remove("d-none");
     hullam.classList.add("d-block");
 
+    towers.length = 0;
+    document.querySelectorAll(".tower").forEach(t => t.remove());
+    for (let i = 0; i < map.length; map++) {
+        for (let j = 0; j < array.length; j++) {
+            if(map[i][j] == "4") map[i][j] = "0";
+        }
+    }
+
     kijelzo_frissites();
 }
 
@@ -309,6 +333,13 @@ function kijelzo_frissites() {
     document.querySelector(".elet").innerHTML = elet;
     document.querySelector(".penz").innerHTML = penz;
     document.querySelector(".wave").innerHTML = wave;
+
+    document.querySelector(".progress-bar-striped").style.width = wave * 20 + "%";
+
+    document.querySelector(".wave-enemies").innerHTML = waveInfos[0][0];
+    document.querySelector(".wave-enemiesSpeeds").innerHTML = waveInfos[0][1];
+    document.querySelector(".wave-enemiesHealts").innerHTML = waveInfos[0][2] + " hp";
+    document.querySelector(".wave-enemiesSpawnRate").innerHTML = SPAWN_IDO + " s";
 }
 
 map_generator(SOROK, OSZLOPOK);
@@ -321,8 +352,8 @@ document.querySelector(".stop").addEventListener('click', () => {
     kijelzo_frissites();
 })
 
-var SEBESSEG = 100;
-var SPAWN_IDO = .2;
+var SEBESSEG = 1;
+var SPAWN_IDO = 1;
 
 var spawnSzamlalo = 1;
 var jatek = null;
@@ -414,7 +445,7 @@ document.querySelector(".start").addEventListener("click", () => {
             }
         }
 
-        
+        kijelzo_frissites()
 
         if (!waveIsOver && meghalt >= waveInfos[0][0]) {
             waveIsOver = true;
