@@ -6,7 +6,7 @@ class Tower {
     #id;
 
     #damage_level = 1;
-    #damage = 20    ;
+    #damage = 20;
 
     #firerate_level = 1;
     #firerate = 1.5;
@@ -29,6 +29,18 @@ class Tower {
         this.setId(id);
 
         this.createElement();
+    }
+
+    typeClass() {
+        return "tower-basic";
+    }
+
+    typeName() {
+        return "Basic Tower";
+    }
+
+    attack(enemy) {
+        enemy.takeDamage(this.getDamage());
     }
 
     setX(x) {
@@ -84,7 +96,7 @@ class Tower {
         }
     }
 
-    getUpgradeCosts(){
+    getUpgradeCosts() {
         return this.#upgradesCosts;
     }
 
@@ -102,12 +114,12 @@ class Tower {
 
         if (this.#damage_level >= 3) {
             alert("Ez a fejlesztes mar maxos! (lvl 3)");
-            return
+            return;
         }
 
         this.#element.classList.remove(
             "damage_level-" + this.#damage_level
-        )
+        );
 
         this.#damage += 5;
         this.#damage_level += 1;
@@ -116,7 +128,7 @@ class Tower {
 
         this.#element.classList.add(
             "damage_level-" + this.#damage_level
-        )
+        );
 
         penz -= cost;
 
@@ -133,12 +145,12 @@ class Tower {
 
         if (this.#firerate_level >= 3) {
             alert("Ez a fejlesztes mar maxos! (lvl 3)");
-            return
+            return;
         }
 
         this.#element.classList.remove(
             "firerate_level-" + this.#firerate_level
-        )
+        );
 
         this.#firerate -= 0.25;
         this.#firerate_level += 1;
@@ -147,7 +159,7 @@ class Tower {
 
         this.#element.classList.add(
             "firerate_level-" + this.#firerate_level
-        )
+        );
 
         penz -= cost;
 
@@ -164,12 +176,12 @@ class Tower {
 
         if (this.#range_level >= 3) {
             alert("Ez a fejlesztes mar maxos! (lvl 3)");
-            return
+            return;
         }
 
         this.#element.classList.remove(
             "range_level-" + this.#range_level
-        )
+        );
 
         this.#range += 0.25;
         this.#range_level += 1;
@@ -178,7 +190,7 @@ class Tower {
 
         this.#element.classList.add(
             "range_level-" + this.#range_level
-        )
+        );
 
         penz -= cost;
 
@@ -190,6 +202,7 @@ class Tower {
 
         this.#element.classList.add(
             "tower",
+            this.typeClass(),
             "damage_level-" + this.#damage_level,
             "firerate_level-" + this.#firerate_level,
             "range_level-" + this.#range_level
@@ -235,7 +248,7 @@ class Tower {
                 e.stopPropagation();
                 doboz.remove();
 
-                towerInfos(this.#id);
+                towerInfos(towers.indexOf(this));
             });
 
             const torles = document.createElement("button");
