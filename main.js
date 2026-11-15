@@ -2,8 +2,8 @@ const game_screen = document.querySelector(".game_screen");
 
 var wave = 1;
 var waveInfos = [
-    [10, 1, 100] // db, speed, hp || 1. wave
-]
+    [1, 1, 100]
+];
 
 var wave_colors = [
     ["#8a2e42", "#df3551"],
@@ -11,6 +11,18 @@ var wave_colors = [
 
 var elet = 15;
 var penz = 1000;
+
+var MUTATION_CHANCE = 0.2;
+var enemyMutations = [RunnerEnemy, BruteEnemy, RegenEnemy];
+
+var towerTypes = [
+    { name: "Basic Tower", tower: Tower, cls: "tower-basic", cost: 25, desc: "Balanced damage" },
+    { name: "Poison Tower", tower: PoisonTower, cls: "tower-poison", cost: 35, desc: "Damage over time" },
+    { name: "Freeze Tower", tower: FreezeTower, cls: "tower-freeze", cost: 35, desc: "Slows enemies" },
+    { name: "Cannon Tower", tower: CannonTower, cls: "tower-cannon", cost: 50, desc: "Splash damage" }
+];
+
+var pendingBuild = null;
 
 var tiles = [
     [0, "grass"],
@@ -134,7 +146,7 @@ function TowerRangeCalc(tx, ty, ex, ey) {
 
 function tamadas(enemy, torony) {
     if (!enemy.isDead() && torony.getCooldown() <= 0) {
-        enemy.takeDamage(torony.getDamage());
+        torony.attack(enemy);
         torony.setCooldown(torony.getFireRate());
     }
 }
@@ -143,11 +155,11 @@ function towerInfos(id) {
     document.querySelector(".towerInfos").classList.remove("d-none");
     document.querySelector(".waveInfos").classList.add("d-none");
     document.querySelector(".gameInfos").classList.add("d-none");
-    
+
     document.querySelector(".towerInfos").innerHTML =
 
     `<div class="w-100 d-flex justify-content-between align-items-center">
-        <h2 class="m-0">Tower Information</h2>
+        <h2 class="m-0">${towers[id].typeName()}</h2>
         <button type="button" class="cancel fw-bold" onclick="closeTowerInfos()"><i class="bi bi-x"></i></button>
     </div>
     <div class="p-5 upg w-100">
@@ -178,7 +190,7 @@ function towerInfos(id) {
     </div>`;
 }
 
-function closeTowerInfos(){
+function closeTowerInfos() {
     document.querySelector(".towerInfos").classList.add("d-none");
     document.querySelector(".waveInfos").classList.remove("d-none");
     document.querySelector(".gameInfos").classList.remove("d-none");
@@ -201,6 +213,79 @@ function towerRangeUpgrade(id) {
     kijelzo_frissites();
     towerInfos(id);
 }
+
+function openTowerPicker(i, j, elem) {
+    pendingBuild = { i: i, j: j, elem: elem };
+
+    var html = "";
+    for (let k = 0; k < towerTypes.length; k++) {
+        var t = towerTypes[k];
+        html += `<button type="button" class="picker-card ${penz < t.cost ? "unaffordable" : ""}" data-index="${k}">
+            <span class="choice-icon ${t.cls}"></span>
+            <span class="picker-name fw-bold">${t.name}</span>
+            <span class="picker-desc">${t.desc}</span>
+            <span class="picker-cost">${t.cost} $</span>
+        </button>`;
+    }
+
+    document.querySelector(".picker-grid").innerHTML = html;
+    document.querySelector(".tower-picker").classList.add("open");
+}
+
+function closeTowerPicker() {
+    pendingBuild = null;
+    document.querySelector(".tower-picker").classList.remove("open");
+}
+
+function buildTower(index) {
+    if (pendingBuild === null) {
+        return;
+    }
+
+    var type = towerTypes[index];
+
+    if (penz < type.cost) {
+        alert("Nincs elég pénzed!");
+        return;
+    }
+
+    var i = pendingBuild.i;
+    var j = pendingBuild.j;
+    var elem = pendingBuild.elem;
+
+    if (map[i][j] === '4') {
+        closeTowerPicker();
+        return;
+    }
+
+    var infos = document.querySelector(".towerInfos");
+    if (infos) {
+        infos.innerHTML = "";
+    }
+
+    penz -= type.cost;
+    map[i][j] = '4';
+
+    var id = towers.length;
+    var tower = new type.tower(i, j, elem, id);
+    towers.push(tower);
+
+    kijelzo_frissites();
+    closeTowerPicker();
+}
+
+document.querySelector(".tower-picker").addEventListener("click", (e) => {
+    var card = e.target.closest(".picker-card");
+
+    if (card) {
+        buildTower(Number(card.dataset.index));
+        return;
+    }
+
+    if (e.target.classList.contains("tower-picker") || e.target.closest(".picker-close")) {
+        closeTowerPicker();
+    }
+});
 
 function toronyLerakas(i, j, elem) {
     document.querySelector(".towerInfos").classList.add("d-none");
@@ -245,20 +330,8 @@ function toronyLerakas(i, j, elem) {
             return;
         }
 
-        const infos = document.querySelector(".towerInfos");
-        if (infos) {
-            infos.innerHTML = "";
-        }
-
-        penz -= 25;
-        map[i][j] = '4';
-
-        const id = towers.length;
-        const tower = new Tower(i, j, elem, id);
-        towers.push(tower);
-
-        kijelzo_frissites();
         doboz.remove();
+        openTowerPicker(i, j, elem);
     });
 
     const megse = document.createElement("button");
@@ -281,7 +354,14 @@ var enemyk = [];
 function enemy_letrehozas() {
     var x = waypointok[0][1] + 0.5;
     var y = waypointok[0][0] + 0.5;
-    var enemy = new Enemy(x, y, game_screen, wave_colors[(wave - 1) % wave_colors.length]);
+    var enemy;
+
+    if (Math.random() < MUTATION_CHANCE) {
+        var Mutation = enemyMutations[Math.floor(Math.random() * enemyMutations.length)];
+        enemy = new Mutation(x, y, game_screen);
+    } else {
+        enemy = new Enemy(x, y, game_screen, wave_colors[(wave - 1) % wave_colors.length]);
+    }
 
     enemyk.push(enemy);
 }
@@ -297,37 +377,63 @@ function jatekVege() {
     clearInterval(jatek);
     jatek = null;
 
+    closeTowerPicker();
+
     document.querySelectorAll(".enemy").forEach(b => b.remove());
     document.querySelectorAll(".build").forEach(b => b.remove());
     document.querySelectorAll(".tower-menu").forEach(tm => tm.remove());
+    document.querySelectorAll(".tower").forEach(t => t.remove());
 
+    for (let i = 0; i < SOROK; i++) {
+        for (let j = 0; j < OSZLOPOK; j++) {
+            if (map[i][j] === '4') {
+                map[i][j] = '0';
+            }
+        }
+    }
+    towers.length = 0;
     enemyk.length = 0;
+
     waveIsOver = false;
     waveInfos[0][0] = 10;
     meghalt = 0;
     enemykDarabszama = 0;
     spawnSzamlalo = 1;
+    waveTimer = 0;
     wave = 1;
     elet = 15;
-    penz = 100;
+    penz = 1000;
 
     var timer = document.querySelector(".timer");
-    var hullam = document.querySelector(".hullam");
+    var hullam = document.querySelector(".wavver");
     timer.classList.remove("d-block");
     timer.classList.add("d-none");
     hullam.classList.remove("d-none");
     hullam.classList.add("d-block");
 
-    towers.length = 0;
-    document.querySelectorAll(".tower").forEach(t => t.remove());
-    for (let i = 0; i < map.length; map++) {
-        for (let j = 0; j < array.length; j++) {
-            if(map[i][j] == "4") map[i][j] = "0";
-        }
-    }
-
+    closeTowerInfos();
+    document.querySelector(".towerInfos").innerHTML = "";
     kijelzo_frissites();
 }
+
+function showResultModal(won) {
+    var modal = document.querySelector(".result-modal");
+    modal.classList.toggle("won", won);
+    modal.classList.toggle("lost", !won);
+    modal.querySelector(".result-title").textContent = won ? "You won!" : "You lost!";
+    modal.querySelector(".result-text").textContent = won ? "You defended your base through all 5 waves." : "The enemies got through your defenses.";
+    modal.classList.add("open");
+}
+
+function closeResultModal() {
+    document.querySelector(".result-modal").classList.remove("open");
+}
+
+document.querySelector(".result-modal").addEventListener("click", (e) => {
+    if (e.target.classList.contains("result-modal") || e.target.closest(".result-close")) {
+        closeResultModal();
+    }
+});
 
 function kijelzo_frissites() {
     document.querySelector(".elet").innerHTML = elet;
@@ -350,7 +456,7 @@ document.querySelector(".stop").addEventListener('click', () => {
     clearInterval(jatek);
     jatek = null;
     kijelzo_frissites();
-})
+});
 
 var SEBESSEG = 1;
 var SPAWN_IDO = 1;
@@ -363,7 +469,6 @@ var waveIsOver = false;
 var meghalt = 0;
 var enemykDarabszama = 0;
 var waveTimer = 0;
-
 
 document.querySelector(".start").addEventListener("click", () => {
     if (jatek !== null) {
@@ -379,7 +484,6 @@ document.querySelector(".start").addEventListener("click", () => {
         var dt = Math.min((most - ido) / 1000, 0.05);
         ido = most;
 
-
         if (waveIsOver) {
             waveTimer -= dt;
             if (waveTimer <= 0) {
@@ -391,7 +495,7 @@ document.querySelector(".start").addEventListener("click", () => {
                 hullam.classList.remove("d-none");
                 hullam.classList.add("d-block");
             } else {
-                timer.textContent = "Next wave in: " + Math.ceil(waveTimer) + "s"; // A Math.ceil() felkerekit a legkozelebbi teljes szamra, szoval 1.3 => 2
+                timer.textContent = "Next wave in: " + Math.ceil(waveTimer) + "s";
             }
         } else {
             spawnSzamlalo += dt;
@@ -407,24 +511,25 @@ document.querySelector(".start").addEventListener("click", () => {
         }
 
         for (let i = enemyk.length - 1; i >= 0; i--) {
-        if (enemyk[i].isDead()) {
-            enemyk[i].torol();
-            enemyk.splice(i, 1);
-            penz += 15;
-            meghalt++;
-            kijelzo_frissites();
-        } else {
-            enemyk[i].lep(SEBESSEG * dt);
-
-            if (enemyk[i].veget_ert() || vegmezon_van(enemyk[i])) {
+            if (enemyk[i].isDead()) {
+                penz += enemyk[i].getReward();
                 enemyk[i].torol();
                 enemyk.splice(i, 1);
-                elet--;
                 meghalt++;
                 kijelzo_frissites();
+            } else {
+                enemyk[i].update(dt);
+                enemyk[i].lep(SEBESSEG * dt);
+
+                if (!enemyk[i].isDead() && (enemyk[i].veget_ert() || vegmezon_van(enemyk[i]))) {
+                    enemyk[i].torol();
+                    enemyk.splice(i, 1);
+                    elet--;
+                    meghalt++;
+                    kijelzo_frissites();
+                }
             }
         }
-    }
 
         for (let i = 0; i < towers.length; i++) {
             towers[i].setCooldown(towers[i].getCooldown() - dt);
@@ -445,11 +550,11 @@ document.querySelector(".start").addEventListener("click", () => {
             }
         }
 
-        kijelzo_frissites()
+        kijelzo_frissites();
 
         if (!waveIsOver && meghalt >= waveInfos[0][0]) {
             waveIsOver = true;
-            wave++;  
+            wave++;
             waveInfos[0][0] = Math.ceil(waveInfos[0][0] * 1.5);
             meghalt = 0;
             enemykDarabszama = 0;
@@ -463,11 +568,10 @@ document.querySelector(".start").addEventListener("click", () => {
             timer.textContent = "Next wave in: 10s";
         }
 
-        
         if (elet <= 0 || wave > 5) {
-            var uzenet = elet <= 0 ? "Veszettél!" : "Nyertél!"
+            var won = elet > 0;
             jatekVege();
-            setTimeout(() => alert(uzenet), 0);
+            setTimeout(() => showResultModal(won), 0);
         }
 
     }, 16);
