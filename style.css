@@ -1,14 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Raleway:ital,wght@0,100..900;1,100..900&family=Space+Grotesk:wght@300..700&display=swap');
-body{
+
+body {
     font-family: "Space Grotesk", sans-serif;
     font-weight: 400;
     font-size: 12px;
     line-height: 1.5;
     max-height: 100vh;
-    padding-top: 7px;
+    padding-top: 8px;
 }
 
-button{
+button {
     font-size: 12px !important;
     border-radius: 2px !important;
 }
@@ -21,34 +22,32 @@ button{
     margin: 0;
 }
 
-/* -- Tile -- */
-
-.tile{
+.tile {
     width: 100%;
     aspect-ratio: 1;
 }
 
-.path{
+.path {
     background-color: #d9b36c;
     border: 3px solid #a8823b18;
 }
 
-.end{
+.end {
     background-color: #8f8f8f;
     border: 3px solid #4b4b4b10;
 }
 
-.grass{
+.grass {
     background-color: #20be67;
     border: 3px solid rgba(29, 134, 76, 0.082);
 }
 
-.water{
+.water {
     background-color: #2077be;
     border: 3px solid rgba(48, 89, 177, 0.089);
 }
 
-.grass:not(:has(.tree, .stone)):hover{
+.grass:not(:has(.tree, .stone)):hover {
     background-color: #21ce6f;
     cursor: pointer;
 }
@@ -76,8 +75,6 @@ button{
     pointer-events: none;
 }
 
-/* -- Tower -- */
-
 .tower {
     pointer-events: auto;
     aspect-ratio: 1;
@@ -87,10 +84,12 @@ button{
     background-color: #1930b6;
     border: 5px solid #2a6dff;
 }
+
 .tower.damage_level-2 {
     background-color: #7e1e46;
     border: 5px solid #d64481;
 }
+
 .tower.damage_level-3 {
     background-color: #7825af;
     border: 5px solid #b467fc;
@@ -99,25 +98,26 @@ button{
 .tower.firerate_level-1 {
     width: 50%;
 }
+
 .tower.firerate_level-2 {
     width: 52.5%;
 }
+
 .tower.firerate_level-3 {
     width: 55%;
 }
 
-.tower.range_level-1{
+.tower.range_level-1 {
     border-radius: 50%;
 }
-.tower.range_level-2{
+
+.tower.range_level-2 {
     border-radius: 0%;
 }
 
-.tower.range_level-3{
+.tower.range_level-3 {
     rotate: 45deg;
 }
-
-/* -- Enemy -- */
 
 .enemy {
     position: absolute;
@@ -134,7 +134,7 @@ button{
     margin-bottom: 5px;
 }
 
-.hp_bar{
+.hp_bar {
     position: absolute;
     width: 100%;
     height: 10px;
@@ -143,114 +143,187 @@ button{
     font-size: 10px;
 }
 
-.enemy .progress-bar{
+.enemy .progress-bar {
     color: #000 !important;
     font-weight: 700 !important;
 }
 
-.screen_header, .towerInfos, .waveInfos, .gameInfos{
-    background-color: #060614;
+.screen_header,
+.towerInfos,
+.waveInfos,
+.gameInfos,
+header .container,
+footer .container{
+    background-color: #2a3452;
 }
 
-.elet_hud, .penz_hud{
-    border: 5px solid #0a0a24cc;
-    background-color: #03030e;
+.elet_hud,
+.penz_hud {
+    border: 5px solid #3b4770;
+    background-color: #202944;
     padding: 10px;
 }
 
-.elet_hud div:first-of-type, .penz_hud div:first-of-type{
+.elet_hud div:first-of-type,
+.penz_hud div:first-of-type {
     padding: 10px 13px 8px 13px;
-    background-color: #07071bcc;
+    background-color: #34406a;
 }
 
-.elet_hud div:first-of-type i, .penz_hud div:first-of-type i{
+.elet_hud div:first-of-type i,
+.penz_hud div:first-of-type i {
     font-size: 18px !important;
 }
 
-.elet_content p:first-of-type, .penz_content p:first-of-type, .wave_hud p:first-of-type{
+.elet_content p:first-of-type,
+.penz_content p:first-of-type,
+.wave_hud p:first-of-type {
     color: #ffffff;
 }
 
-.screen_body{
-    background-color: #0a0a24cc;
+.screen_body {
+    background-color: #242942;
 }
 
-.timer{
+.timer {
     width: 140px;
 }
 
-.towerInfos .upg{
-    border: 5px solid #0a0a24cc;
-    background-color: #03030e;
+.towerInfos .upg {
+    border: 5px solid #3b4770;
+    background-color: #202944;
 }
 
-.upg, .upgradeButton, .elet_hud, .penz_hud{
+.upg,
+.upgradeButton,
+.elet_hud,
+.penz_hud {
     border-radius: 6px !important;
 }
 
-.elet_hud div:first-of-type, .penz_hud div:first-of-type{
+.elet_hud div:first-of-type,
+.penz_hud div:first-of-type {
     border-radius: 4px !important;
 }
 
-.upgradeButton{
+.upgradeButton {
     padding: 2.2px;
     border: 5px solid #865a17;
     background-color: #c7ac52;
     color: #000000;
 }
 
-.upgradeButton:hover{
+.upgradeButton:hover {
     background-color: #dbb22a;
 }
 
-.towerInfos h2, .waveInfos h2, .gameInfos h2, h1{
+.towerInfos h2,
+.waveInfos h2,
+.gameInfos h2,
+h1 {
     font-size: 18px;
 }
 
-.start, .stop{
-    border: 5px solid #0a0a24cc;
-    background-color: #03030e;
+.towerInfos{
+    padding-bottom: 25px;
 }
 
-.start:hover, .stop:hover, .fastForward:hover, .normalForward:hover{
-    background-color: #07070c;
+.start,
+.stop {
+    border: 5px solid #3b4770;
+    background-color: #202944;
 }
 
-.start, .stop{
+.start:hover,
+.stop:hover,
+.fastForward:hover,
+.normalForward:hover {
+    background-color: #2b3558;
+}
+
+.start,
+.stop {
     padding: 5px 20px;
 }
 
-.start i, .stop i{
+.start i,
+.stop i {
     font-size: 18px !important;
 }
 
-.cancel{
+.cancel {
     font-size: 20px !important;
     background: none;
     border: none;
 }
 
-.gameInfos{
-    padding-bottom: 22px !important;
+.gameInfos {
+    padding-bottom: 31px !important;
 }
 
-footer .container, header .container{
-    background-color: #0a0a24cc !important;
+footer .container,
+header .container {
     padding: 0px !important;
 }
 
-header, footer{
+header,
+footer {
     background: none !important;
 }
 
-main .container{
+main .container {
     padding: 0 !important;
 }
 
-body, main{
-    background-color: #000000;
+body,
+main {
+    background-color: #1b2238;
 }
 
-main{
+main {
     padding: 47px;
+}
+
+.result-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.75);
+    padding: 16px;
+}
+
+.result-modal.open {
+    display: flex;
+}
+
+.result-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 32px;
+    text-align: center;
+    background-color: #2a3452;
+    border: 5px solid #475585;
+    border-radius: 6px;
+    color: #fff;
+}
+
+.result-box .result-title {
+    font-size: 28px;
+    margin-bottom: 12px;
+}
+
+.result-modal.won .result-title {
+    color: #21ce6f;
+}
+
+.result-modal.lost .result-title {
+    color: #df3551;
+}
+
+.result-box .result-close {
+    margin-top: 16px;
+    padding: 8px;
 }
