@@ -108,12 +108,12 @@ class Tower {
         const cost = this.#upgradesCosts[0];
 
         if (penz < cost) {
-            alert("Nincs eleg penzed ehez a fejleszteshez!");
+            alert("You dont have enough money!");
             return;
         }
 
         if (this.#damage_level >= 3) {
-            alert("Ez a fejlesztes mar maxos! (lvl 3)");
+            alert("This upgrade is already at maximum level! ( level 3 )");
             return;
         }
 
@@ -139,12 +139,12 @@ class Tower {
         const cost = this.#upgradesCosts[1];
 
         if (penz < cost) {
-            alert("Nincs eleg penzed ehez a fejleszteshez!");
+            alert("You dont have enough money!");
             return;
         }
 
         if (this.#firerate_level >= 3) {
-            alert("Ez a fejlesztes mar maxos! (lvl 3)");
+            alert("This upgrade is already at maximum level! ( level 3 )");
             return;
         }
 
@@ -170,12 +170,12 @@ class Tower {
         const cost = this.#upgradesCosts[2];
 
         if (penz < cost) {
-            alert("Nincs eleg penzed ehez a fejleszteshez!");
+            alert("You dont have enough money!");
             return;
         }
 
         if (this.#range_level >= 3) {
-            alert("Ez a fejlesztes mar maxos! (lvl 3)");
+            alert("This upgrade is already at maximum level! ( level 3 )");
             return;
         }
 
