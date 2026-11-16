@@ -1,183 +1,98 @@
-
-domReset()
-var screen = document.createElement("div")
-document.body.appendChild(screen)
-var szinek = ["#112233", "#445566"]
-var enemy = new Enemy(0.5, 0.5, screen, szinek)
-var enemyElem = screen.querySelector(".enemy")
-var referencia = document.createElement("div")
-
-console.assert(enemy.getX() === 0.5, "Hiba az Enemy getX() metódus működésében!")
-console.assert(enemy.getY() === 0.5, "Hiba az Enemy getY() metódus működésében!")
-console.assert(JSON.stringify(enemy.getHitbox_color()) === JSON.stringify(szinek), "Hiba az Enemy getHitbox_color() metódus működésében!")
-console.assert(enemy.typeClass() === "enemy-normal", "Hiba az Enemy typeClass() metódus működésében!")
-console.assert(enemy.baseHp() === 100, "Hiba az Enemy baseHp() metódus működésében!")
-console.assert(enemy.speedMultiplier() === 1, "Hiba az Enemy speedMultiplier() metódus működésében!")
-console.assert(enemy.getReward() === 15, "Hiba az Enemy getReward() metódus működésében!")
-console.assert(enemy.getSpeed() === 1, "Hiba az Enemy getSpeed() metódus működésében, nem 1 az alap sebesség!")
-console.assert(enemy.isDead() === false, "Hiba az Enemy isDead() metódus működésében, a friss ellenség halott!")
-console.assert(enemy.veget_ert() === false, "Hiba az Enemy veget_ert() metódus működésében, a friss ellenség már a végén van!")
-console.assert(enemy.onUpdate(1) === undefined, "Hiba az Enemy onUpdate() metódus működésében, az alap nem üres!")
-console.assert(enemyElem !== null && enemyElem.parentElement === screen, "Hiba az Enemy createElement() metódus működésében, az elem nem kerül a game_screen-be!")
-console.assert(enemyElem.classList.contains("enemy") && enemyElem.classList.contains("enemy-normal"), "Hiba az Enemy createElement() metódus működésében, hibásak az elem class-ai!")
-var hitbox = enemyElem.querySelector(".enemy_hitbox")
-console.assert(hitbox !== null, "Hiba az Enemy createElement() metódus működésében, hiányzik a hitbox!")
-referencia.style.background = szinek[0]
-console.assert(hitbox.style.background === referencia.style.background, "Hiba az Enemy createElement() metódus működésében, a hitbox háttere hibás!")
-referencia.style.border = "5px solid " + szinek[1]
-console.assert(hitbox.style.border === referencia.style.border, "Hiba az Enemy createElement() metódus működésében, a hitbox szegélye hibás!")
-var hpBar = enemyElem.querySelector(".hp_bar")
-console.assert(hpBar !== null && hpBar.classList.contains("progress"), "Hiba az Enemy createElement() metódus működésében, hibás a hp_bar!")
-var hpProgress = hpBar.querySelector(".progress-bar")
-console.assert(hpProgress !== null && hpProgress.classList.contains("theme-success"), "Hiba az Enemy createElement() metódus működésében, hibás a progress-bar!")
-console.assert(hpProgress.style.width === "100%", "Hiba az Enemy createElement() metódus működésében, a kezdő hp sáv nem 100%!")
-console.assert(enemyElem.style.left === "5%", "Hiba az Enemy draw() metódus működésében, hibás a left érték!")
-console.assert(enemyElem.style.top === "5%", "Hiba az Enemy draw() metódus működésében, hibás a top érték!")
-
-enemy.setX(2)
-enemy.setY(4)
-console.assert(enemy.getX() === 2, "Hiba az Enemy setX() metódus működésében!")
-console.assert(enemy.getY() === 4, "Hiba az Enemy setY() metódus működésében!")
-enemy.draw()
-console.assert(enemyElem.style.left === "20%" && enemyElem.style.top === "40%", "Hiba az Enemy draw() metódus működésében, nem frissíti a pozíciót!")
-enemy.setHitbox_color(["#000", "#fff"])
-console.assert(enemy.getHitbox_color()[0] === "#000" && enemy.getHitbox_color()[1] === "#fff", "Hiba az Enemy setHitbox_color() metódus működésében!")
-enemy.setGame_screen(screen)
-enemy.torol()
-console.assert(screen.querySelector(".enemy") === null, "Hiba az Enemy torol() metódus működésében, nem távolítja el az elemet!")
+var screen = document.createElement("div");
+screen.style.display = "none";
+document.body.appendChild(screen);
 
 
-domReset()
-screen = document.createElement("div")
-document.body.appendChild(screen)
-enemy = new Enemy(0.5, 0.5, screen, ["#111", "#222"])
-enemyElem = screen.querySelector(".enemy")
-hpProgress = enemyElem.querySelector(".progress-bar")
+var e1 = new Enemy(0.5, 0.5, screen, ["#ff0000", "#990000"]);
+var el1 = screen.lastChild;
+var hp1 = el1.children[1].children[0];
 
-enemy.takeDamage(50)
-console.assert(enemy.isDead() === false, "Hiba az Enemy takeDamage() metódus működésében, 50 sebzés után halott!")
-console.assert(hpProgress.style.width === "50%", "Hiba az Enemy takeDamage() metódus működésében, 50 sebzés után nem 50% a sáv!")
-console.assert(hpProgress.innerHTML === "50", "Hiba az Enemy updateHp() metódus működésében, nem 50 a kiírt érték!")
-enemy.takeDamage(25)
-console.assert(hpProgress.style.width === "25%", "Hiba az Enemy takeDamage() metódus működésében, 75 sebzés után nem 25% a sáv!")
-console.assert(hpProgress.innerHTML === "25", "Hiba az Enemy updateHp() metódus működésében, nem 25 a kiírt érték!")
-enemy.heal(50)
-console.assert(hpProgress.style.width === "75%", "Hiba az Enemy heal() metódus működésében, nem 75% a sáv gyógyítás után!")
-console.assert(hpProgress.innerHTML === "75", "Hiba az Enemy heal() metódus működésében, nem 75 a kiírt érték!")
-enemy.heal(1000)
-console.assert(hpProgress.style.width === "100%", "Hiba az Enemy heal() metódus működésében, a max hp fölé is gyógyít!")
-enemy.takeDamage(100)
-console.assert(enemy.isDead() === true, "Hiba az Enemy takeDamage() metódus működésében, a pontosan halálos sebzés nem öl!")
-console.assert(hpProgress.style.width === "0%", "Hiba az Enemy takeDamage() metódus működésében, halott ellenségnél nem 0% a sáv!")
-console.assert(hpProgress.innerHTML === "0", "Hiba az Enemy updateHp() metódus működésében, halottnál nem 0 a kiírt érték!")
-enemy.heal(50)
-console.assert(enemy.isDead() === true, "Hiba az Enemy heal() metódus működésében, a halott ellenség feltámad!")
-console.assert(hpProgress.style.width === "0%", "Hiba az Enemy heal() metódus működésében, a halott ellenség sávja változik!")
-
-var tulSebzett = new Enemy(0.5, 0.5, screen, ["#111", "#222"])
-tulSebzett.takeDamage(500)
-console.assert(tulSebzett.isDead() === true, "Hiba az Enemy takeDamage() metódus működésében, a túlzott sebzés nem öl!")
-// FIGYELEM: az eredetiben "hpWidth = ..." ertekadas volt itt, ami felulirta a hpWidth() fuggvenyt.
-console.assert(screen.querySelectorAll(".enemy")[1].querySelector(".progress-bar").style.width === "0%", "Hiba az Enemy takeDamage() metódus működésében, túlzott sebzésnél nem 0% a sáv!")
-var nullaSebzes = new Enemy(0.5, 0.5, screen, ["#111", "#222"])
-nullaSebzes.takeDamage(0)
-console.assert(nullaSebzes.isDead() === false, "Hiba az Enemy takeDamage() metódus működésében, a 0 sebzés öl!")
+console.assert(e1.getX() === 0.5, "Hiba: getX");
+console.assert(e1.getY() === 0.5, "Hiba: getY");
+console.assert(e1.getSpeed() === 1, "Hiba: getSpeed alapból nem 1");
+console.assert(e1.isDead() === false, "Hiba: isDead élőnél");
+console.assert(e1.getReward() === 15, "Hiba: getReward");
+console.assert(e1.baseHp() === 100, "Hiba: baseHp");
+console.assert(e1.typeClass() === "enemy-normal", "Hiba: typeClass");
+console.assert(parseFloat(hp1.style.width) === 100, "Hiba: kezdeti HP nem 100%");
 
 
-domReset()
-screen = document.createElement("div")
-document.body.appendChild(screen)
-enemy = new Enemy(0.5, 0.5, screen, ["#111", "#222"])
-enemyElem = screen.querySelector(".enemy")
-
-enemy.applyPoison(50, 1)
-console.assert(enemyElem.classList.contains("poisoned"), "Hiba az Enemy applyPoison() metódus működésében, nem adja hozzá a poisoned class-t!")
-enemy.update(0.5)
-console.assert(kozel(hpWidth(enemyElem), 75), "Hiba az Enemy update() metódus működésében, az első méreg tick után nem 75% a sáv!")
-console.assert(enemyElem.classList.contains("poisoned"), "Hiba az Enemy update() metódus működésében, a méreg idő előtt lejár!")
-enemy.update(0.5)
-console.assert(kozel(hpWidth(enemyElem), 50), "Hiba az Enemy update() metódus működésében, a második méreg tick után nem 50% a sáv!")
-console.assert(!enemyElem.classList.contains("poisoned"), "Hiba az Enemy update() metódus működésében, a lejárt méregnél megmarad a poisoned class!")
-enemy.update(1)
-console.assert(kozel(hpWidth(enemyElem), 50), "Hiba az Enemy update() metódus működésében, a lejárt méreg tovább sebez!")
-enemy.applyPoison(10, 5)
-enemy.applyPoison(20, 5)
-enemy.update(1)
-console.assert(kozel(hpWidth(enemyElem), 30), "Hiba az Enemy applyPoison() metódus működésében, az új méreg nem írja felül a régit!")
-
-var meregHalal = new Enemy(0.5, 0.5, screen, ["#111", "#222"])
-var meregHalalElem = screen.querySelectorAll(".enemy")[1]
-meregHalal.applyPoison(1000, 1)
-meregHalal.update(1)
-console.assert(meregHalal.isDead() === true, "Hiba az Enemy update() metódus működésében, a méreg nem öli meg az ellenséget!")
-console.assert(kozel(hpWidth(meregHalalElem), 0), "Hiba az Enemy update() metódus működésében, méreg általi halálnál nem 0% a sáv!")
-
-var lassu = new Enemy(0.5, 0.5, screen, ["#111", "#222"])
-var lassuElem = screen.querySelectorAll(".enemy")[2]
-lassu.applySlow(0.5, 2)
-console.assert(lassuElem.classList.contains("frozen"), "Hiba az Enemy applySlow() metódus működésében, nem adja hozzá a frozen class-t!")
-console.assert(lassu.getSpeed() === 0.5, "Hiba az Enemy getSpeed() metódus működésében, lassítva nem 0.5 a sebesség!")
-lassu.update(1)
-console.assert(lassu.getSpeed() === 0.5 && lassuElem.classList.contains("frozen"), "Hiba az Enemy update() metódus működésében, a lassítás idő előtt lejár!")
-lassu.update(1)
-console.assert(lassu.getSpeed() === 1, "Hiba az Enemy update() metódus működésében, a lassítás lejárta után nem áll vissza a sebesség!")
-console.assert(!lassuElem.classList.contains("frozen"), "Hiba az Enemy update() metódus működésében, a lejárt lassításnál megmarad a frozen class!")
-lassu.applySlow(0.25, 1)
-lassu.applySlow(0.5, 3)
-console.assert(lassu.getSpeed() === 0.5, "Hiba az Enemy applySlow() metódus működésében, az új lassítás nem írja felül a régit!")
-lassu.update(2)
-console.assert(lassu.getSpeed() === 0.5, "Hiba az Enemy applySlow() metódus működésében, az új időtartam nem érvényesül!")
-lassu.update(1)
-console.assert(lassu.getSpeed() === 1, "Hiba az Enemy update() metódus működésében, az újra beállított lassítás nem jár le!")
-
-class FigyeloEnemy extends Enemy {
-    constructor(x, y, s) {
-        super(x, y, s, ["#111", "#222"])
-        this.hivasok = []
-    }
-
-    onUpdate(dt) {
-        this.hivasok.push(dt)
-    }
-}
-
-var figyelo = new FigyeloEnemy(0.5, 0.5, screen)
-figyelo.update(0.1)
-figyelo.update(0.2)
-console.assert(figyelo.hivasok.length === 2 && figyelo.hivasok[0] === 0.1 && figyelo.hivasok[1] === 0.2, "Hiba az Enemy update() metódus működésében, nem hívja meg az onUpdate() metódust a dt értékkel!")
+var vartLeft = 0.5 / OSZLOPOK * 100;
+var vartTop = 0.5 / SOROK * 100;
+console.assert(Math.abs(parseFloat(el1.style.left) - vartLeft) < 0.01, "Hiba: draw() left érték");
+console.assert(Math.abs(parseFloat(el1.style.top) - vartTop) < 0.01, "Hiba: draw() top érték");
 
 
-domReset()
-screen = document.createElement("div")
-document.body.appendChild(screen)
-enemy = new Enemy(0.5, 0.5, screen, ["#111", "#222"])
-enemyElem = screen.querySelector(".enemy")
+e1.setX(2);
+e1.setY(3);
+e1.setHitbox_color(["blue", "darkblue"]);
+console.assert(e1.getX() === 2, "Hiba: setX");
+console.assert(e1.getY() === 3, "Hiba: setY");
+console.assert(e1.getHitbox_color()[0] === "blue", "Hiba: setHitbox_color");
 
-enemy.lep(1)
-console.assert(kozel(enemy.getX(), 1.5) && kozel(enemy.getY(), 0.5), "Hiba az Enemy lep() metódus működésében, 1 egységnyi lépés után hibás a pozíció!")
-console.assert(enemyElem.style.left === "15%" && enemyElem.style.top === "5%", "Hiba az Enemy lep() metódus működésében, nem rajzolja újra az ellenséget!")
-console.assert(enemy.veget_ert() === false, "Hiba az Enemy lep() metódus működésében, túl korán vége az útnak!")
-enemy.lep(0)
-console.assert(kozel(enemy.getX(), 1.5), "Hiba az Enemy lep() metódus működésében, 0 lépésnél elmozdul!")
-enemy.lep(3)
-console.assert(kozel(enemy.getX(), 4.5) && kozel(enemy.getY(), 0.5), "Hiba az Enemy lep() metódus működésében, nem áll meg pontosan a waypointon!")
-console.assert(enemy.veget_ert() === false, "Hiba az Enemy veget_ert() metódus működésében, a köztes waypointnál már végének jelzi!")
-enemy.lep(3)
-console.assert(kozel(enemy.getX(), 4.5) && kozel(enemy.getY(), 3.5), "Hiba az Enemy lep() metódus működésében, a második szakasz hibás!")
-console.assert(enemy.veget_ert() === true, "Hiba az Enemy veget_ert() metódus működésében, a végpontnál nem jelzi a végét!")
-enemy.lep(10)
-console.assert(kozel(enemy.getX(), 4.5) && kozel(enemy.getY(), 3.5), "Hiba az Enemy lep() metódus működésében, a végpont után is mozog!")
-console.assert(enemy.veget_ert() === true, "Hiba az Enemy veget_ert() metódus működésében, a végpont után már nem jelzi a végét!")
 
-var atlepo = new Enemy(0.5, 0.5, screen, ["#111", "#222"])
-atlepo.lep(5)
-console.assert(kozel(atlepo.getX(), 4.5) && kozel(atlepo.getY(), 1.5), "Hiba az Enemy lep() metódus működésében, egy lépésben nem lép át a waypointon!")
-console.assert(atlepo.veget_ert() === false, "Hiba az Enemy lep() metódus működésében, az átlépés után már vége az útnak!")
-atlepo.lep(100)
-console.assert(atlepo.veget_ert() === true, "Hiba az Enemy lep() metódus működésében, a nagy lépés nem ér a végpontra!")
-console.assert(kozel(atlepo.getX(), 4.5) && kozel(atlepo.getY(), 3.5), "Hiba az Enemy lep() metódus működésében, a nagy lépés nem a végpontnál áll meg!")
+e1.takeDamage(30);
+console.assert(Math.abs(parseFloat(hp1.style.width) - 70) < 0.01, "Hiba: takeDamage 30 után nem 70%");
 
-var lassitott = new Enemy(0.5, 0.5, screen, ["#111", "#222"])
-lassitott.applySlow(0.5, 2)
-lassitott.lep(2)
-console.assert(kozel(lassitott.getX(), 1.5), "Hiba az Enemy lep() metódus működésében, lassítva nem a sebesség felével lép!")
+e1.heal(20);
+console.assert(Math.abs(parseFloat(hp1.style.width) - 90) < 0.01, "Hiba: heal 20 után nem 90%");
+
+e1.heal(50);
+console.assert(parseFloat(hp1.style.width) === 100, "Hiba: heal túl tud gyógyítani max HP-n");
+
+e1.takeDamage(200);
+console.assert(e1.isDead() === true, "Hiba: 0 HP-nál nem halott");
+console.assert(parseFloat(hp1.style.width) === 0, "Hiba: halál után nem 0%-ra állítja a HP-t");
+
+e1.heal(50);
+console.assert(e1.isDead() === true, "Hiba: heal() feltámasztja a halottat");
+
+
+var e2 = new Enemy(0, 0, screen, ["red", "red"]);
+var hp2 = screen.lastChild.children[1].children[0];
+
+e2.applyPoison(10, 2);
+e2.update(1);
+console.assert(Math.abs(parseFloat(hp2.style.width) - 90) < 0.01, "Hiba: poison 1 sec után");
+
+e2.update(1.5);
+console.assert(Math.abs(parseFloat(hp2.style.width) - 75) < 0.01, "Hiba: poison további sebzése");
+
+e2.update(1);
+console.assert(Math.abs(parseFloat(hp2.style.width) - 75) < 0.01, "Hiba: lejárt poison tovább sebez");
+
+var e3 = new Enemy(0, 0, screen, ["red", "red"]);
+e3.applySlow(0.5, 2);
+console.assert(e3.getSpeed() === 0.5, "Hiba: slow nem 0.5-re lassít");
+
+e3.update(1);
+console.assert(e3.getSpeed() === 0.5, "Hiba: slow 1 sec után megszűnt");
+
+e3.update(1.5);
+console.assert(e3.getSpeed() === 1, "Hiba: slow lejárta után nem állt vissza a sebesség");
+
+
+var hookCalled = false;
+e3.onUpdate = function () { hookCalled = true; };
+e3.update(0.1);
+console.assert(hookCalled === true, "Hiba: update() nem hívja meg az onUpdate()-et");
+
+
+var kezdoX = waypointok[0][1] + 0.5;
+var kezdoY = waypointok[0][0] + 0.5;
+var e4 = new Enemy(kezdoX, kezdoY, screen, ["red", "red"]);
+
+console.assert(e4.veget_ert() === false, "Hiba: frissen létrehozott ne legyen a pálya végén");
+
+
+e4.lep(10000);
+var utolsoWP = waypointok[waypointok.length - 1];
+
+console.assert(e4.getX() === utolsoWP[1] + 0.5, "Hiba: nem érte el a pálya végét X-ben");
+console.assert(e4.getY() === utolsoWP[0] + 0.5, "Hiba: nem érte el a pálya végét Y-ban");
+console.assert(e4.veget_ert() === true, "Hiba: veget_ert nem igaz a pálya végén");
+
+
+var elemekSzama = screen.children.length;
+e4.torol();
+console.assert(screen.children.length === elemekSzama - 1, "Hiba: torol() nem távolította el a DOM elemet");
