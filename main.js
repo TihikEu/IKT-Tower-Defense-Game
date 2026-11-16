@@ -2,7 +2,7 @@ const game_screen = document.querySelector(".game_screen");
 
 var wave = 1;
 var waveInfos = [
-    [1, 1, 100]
+    [10, 1, 100]
 ];
 
 var wave_colors = [
@@ -10,7 +10,7 @@ var wave_colors = [
 ];
 
 var elet = 15;
-var penz = 1000;
+var penz = 500;
 
 var MUTATION_CHANCE = 0.2;
 var enemyMutations = [RunnerEnemy, BruteEnemy, RegenEnemy];
@@ -158,7 +158,7 @@ function towerInfos(id) {
 
     document.querySelector(".towerInfos").innerHTML =
 
-    `<div class="w-100 d-flex justify-content-between align-items-center">
+        `<div class="w-100 d-flex justify-content-between align-items-center">
         <h2 class="m-0">${towers[id].typeName()}</h2>
         <button type="button" class="cancel fw-bold" onclick="closeTowerInfos()"><i class="bi bi-x"></i></button>
     </div>
@@ -245,7 +245,7 @@ function buildTower(index) {
     var type = towerTypes[index];
 
     if (penz < type.cost) {
-        alert("Nincs elég pénzed!");
+        alert("You dont have enough money!");
         return;
     }
 
@@ -300,7 +300,7 @@ function toronyLerakas(i, j, elem) {
     }
 
     if (penz < 25) {
-        alert("Nincs elég pénzed!");
+        alert("You dont have enough money!");
         return;
     }
 
@@ -317,7 +317,7 @@ function toronyLerakas(i, j, elem) {
         doboz.remove();
     });
 
-    const epit = document.createElement("button");
+    var epit = document.createElement("button");
     epit.classList.add("btn", "epit");
     epit.textContent = "Build";
 
@@ -325,7 +325,7 @@ function toronyLerakas(i, j, elem) {
         e.stopPropagation();
 
         if (penz < 25) {
-            alert("Nincs elég pénzed!");
+            alert("You dont have enough money!");
             doboz.remove();
             return;
         }
@@ -443,7 +443,6 @@ function kijelzo_frissites() {
     document.querySelector(".progress-bar-striped").style.width = wave * 20 + "%";
 
     document.querySelector(".wave-enemies").innerHTML = waveInfos[0][0];
-    document.querySelector(".wave-enemiesSpeeds").innerHTML = waveInfos[0][1];
     document.querySelector(".wave-enemiesHealts").innerHTML = waveInfos[0][2] + " hp";
     document.querySelector(".wave-enemiesSpawnRate").innerHTML = SPAWN_IDO + " s";
 }
