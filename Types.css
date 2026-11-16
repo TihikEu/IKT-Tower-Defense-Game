@@ -1,7 +1,22 @@
-.tower-basic { --fill: #1930b6; --edge: #2a6dff; }
-.tower-poison { --fill: #1f7a2e; --edge: #4be36a; }
-.tower-freeze { --fill: #1c7aa8; --edge: #7fe3ff; }
-.tower-cannon { --fill: #a8431a; --edge: #ff9a4a; }
+.tower-basic {
+    --fill: #1930b6;
+    --edge: #2a6dff;
+}
+
+.tower-poison {
+    --fill: #1f7a2e;
+    --edge: #4be36a;
+}
+
+.tower-freeze {
+    --fill: #1c7aa8;
+    --edge: #7fe3ff;
+}
+
+.tower-cannon {
+    --fill: #a8431a;
+    --edge: #ff9a4a;
+}
 
 .game_screen .tower.tower-poison,
 .game_screen .tower.tower-freeze,
