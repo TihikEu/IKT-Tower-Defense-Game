@@ -169,6 +169,7 @@ class Enemy {
             "theme-success"
         );
         this.#hp_progress.style.width = (this.#hp / this.#max_hp * 100) + "%";
+        this.#hp_progress.innerHTML = parseInt((this.#hp / this.#max_hp * 100));
 
         this.#hp_bar.appendChild(this.#hp_progress);
 
